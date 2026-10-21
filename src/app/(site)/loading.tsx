@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="section-wrap page-heading" role="status" aria-live="polite"><p className="eyebrow">EOS</p><p className="body-copy">Caricamento in corso…</p></div>}

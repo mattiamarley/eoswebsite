@@ -1,0 +1,37 @@
+'use client'
+
+import { ArrowIcon } from '@/src/components/site/ArrowIcon'
+
+
+import { useRef } from 'react'
+import Link from 'next/link'
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { Blueprint } from './site/Blueprint'
+
+export function Hero() {
+  const ref = useRef<HTMLElement>(null)
+  const reduced = useReducedMotion()
+  const { scrollYProgress } = useScroll({target: ref, offset: ['start start', 'end end']})
+  const foundation = useTransform(scrollYProgress, [0,.28], [.25,1])
+  const structure = useTransform(scrollYProgress, [.2,.62], [0,1])
+  const envelope = useTransform(scrollYProgress, [.55,.95], [0,1])
+  const lift = useTransform(scrollYProgress, [0,1], [18,-12])
+  return <section ref={ref} className={`hero-scroll ${reduced ? 'motion-static' : ''}`} aria-labelledby="hero-title">
+    <div className="hero-sticky">
+      <div className="hero-heading">
+        <p className="eyebrow">EOS / INGEGNERIA E PROGETTAZIONE</p>
+        <h1 id="hero-title">Ogni progetto nasce<br/><span>da una visione</span></h1>
+        <p className="hero-subtitle">Progettazione civile, ambiente e sicurezza</p>
+      </div>
+      <motion.div className="hero-drawing" style={{y: reduced ? 0 : lift}}><Blueprint progress={[foundation,structure,envelope]} reduced={!!reduced}/></motion.div>
+      <div className="hero-foot">
+        <a className="scroll-invitation" href="#introduzione"><span aria-hidden="true"><ArrowIcon direction="down"/></span> Scorri per costruire</a>
+        <div className="build-legend glass" aria-label="Fasi di costruzione">
+          {['Fondazioni', 'Struttura', 'Involucro'].map((label,i) => <div key={label}><span>0{i+1}</span>{label}<div className="phase-track"><motion.div style={{scaleX: reduced ? 1 : [foundation,structure,envelope][i]}}/></div></div>)}
+        </div>
+        <Link href="/portfolio" className="text-link">Esplora i progetti <span aria-hidden="true"><ArrowIcon/></span></Link>
+      </div>
+      <span className="drawing-caption" aria-hidden="true">EOS — STUDIO CONCETTUALE / ASSONOMETRIA</span>
+    </div>
+  </section>
+}

@@ -1,0 +1,94 @@
+'use client'
+
+import { useId, useRef } from 'react'
+import { motion, useTransform, useMotionValueEvent, type MotionValue } from 'framer-motion'
+
+const fragments = [
+  { x: 200, y: 185, w: 142, h: 70, dx: -5, dy: -95 },
+  { x: 342, y: 185, w: 118, h: 70, dx: 0, dy: -110 },
+  { x: 460, y: 185, w: 150, h: 70, dx: 5, dy: -95 },
+  { x: 200, y: 255, w: 142, h: 43, dx: -8, dy: -65 },
+  { x: 342, y: 255, w: 118, h: 43, dx: 0, dy: -75 },
+  { x: 460, y: 255, w: 150, h: 43, dx: 8, dy: -65 },
+  { x: 200, y: 298, w: 142, h: 70, dx: -5, dy: -30 },
+  { x: 342, y: 298, w: 118, h: 70, dx: 0, dy: -38 },
+  { x: 460, y: 298, w: 150, h: 70, dx: 5, dy: -30 },
+]
+
+function DepthSlice({step,clipId,depth,solid}:{step:number;clipId:string;depth:MotionValue<number>;solid:MotionValue<number>}) {
+  const x=useTransform(depth,d=>d*step*5)
+  const y=useTransform(depth,d=>-d*step*4)
+  const opacity=useTransform(depth,d=>d*.5)
+  return <motion.g style={{x,y,opacity}}><g clipPath={`url(#${clipId})`}>
+    <motion.text x="400" y="340" textAnchor="middle" stroke="var(--color-ink)" strokeWidth=".6" fill="var(--color-lavender-dark)" style={{fillOpacity:solid}}>eos</motion.text>
+  </g></motion.g>
+}
+
+function Fragment({ index, clipId, assembly, depth, solid, face }: {
+  index: number; clipId: string; assembly: MotionValue<number>; depth: MotionValue<number>
+  solid: MotionValue<number>; face: MotionValue<string>
+}) {
+  const part = fragments[index]
+  const start = [ .65, .69, .73, .34, .38, .42, .04, .08, .12 ][index]
+  const progress = useTransform(assembly, value => {
+    const t = Math.max(0, Math.min(1, (value - start) / .23))
+    return t * t * (3 - 2 * t)
+  })
+  const x = useTransform(progress, p => part.dx * (1 - p))
+  const y = useTransform(progress, p => part.dy * (1 - p))
+  const visibility=useTransform(assembly,v=>Math.max(0,Math.min(1,(v-start+.07)/.1)))
+  return <motion.g style={{ x, y, opacity: visibility }}>
+    {Array.from({length:8},(_,i)=><DepthSlice key={i} step={8-i} clipId={clipId} depth={depth} solid={solid}/>)}
+    <g clipPath={`url(#${clipId})`}>
+      <motion.text x="400" y="340" textAnchor="middle" fill={face} stroke="var(--color-ink)" strokeWidth=".9" style={{ fillOpacity: solid }}>eos</motion.text>
+    </g>
+  </motion.g>
+}
+
+/** A single wordmark assembled from nine blueprint fragments, then turned frontally. */
+export function EosBlueprint({ trace, depth, solid, turn, progress }: {
+  trace: MotionValue<number>; depth: MotionValue<number>; solid: MotionValue<number>; turn: MotionValue<number>; progress: MotionValue<number>
+}) {
+  const envelope=useTransform(progress,p=>Math.max(0,Math.min(1,(p-.52)/.12)))
+  const envelopeOpacity=useTransform(()=>envelope.get()*(1-turn.get())*.55)
+  const id = useId().replace(/:/g, '')
+  const plane = useTransform(turn, t => `matrix(${.866 + (.65 - .866) * t} ${.5 * (1 - t)} 0 ${1 - .35 * t} ${30 + 130 * t} ${-140 + 129 * t})`)
+  const planeRef = useRef<SVGGElement>(null)
+  useMotionValueEvent(plane, 'change', value => planeRef.current?.setAttribute('transform', value))
+  const guides = useTransform(turn, t => 1 - t)
+  const face = useTransform(turn, [0, 1], ['#dedbf0', '#1a2b5e'])
+  return <svg className="blueprint eos-blueprint" viewBox="80 60 680 470" fill="none" aria-hidden="true">
+    <defs><clipPath id={`${id}-systems`}><text x="400" y="340" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="246" letterSpacing="-18" fontWeight="400">eos</text></clipPath>{fragments.map((part, i) => <clipPath key={i} id={`${id}-${i}`}><rect x={part.x} y={part.y} width={part.w + .4} height={part.h + .4}/></clipPath>)}</defs>
+    <g ref={planeRef} transform="matrix(.866 .5 0 1 30 -140)" fontFamily="Arial, sans-serif" fontSize="246" letterSpacing="-18" fontWeight="400" strokeLinejoin="round">
+      <motion.g style={{ opacity: guides }} stroke="currentColor">
+        <g strokeWidth=".65" opacity=".3">
+          <path d="M170 364H618L714 268H266Z" fill="var(--color-lavender-light)" fillOpacity=".13"/>
+          {Array.from({length:15},(_,i)=><path key={i} d={`M${170+i*32} 364l96 -96`}/>)}
+          {Array.from({length:5},(_,i)=><path key={i} d={`M${170+i*24} ${364-i*24}h448`}/>)}
+          <path d="M170 364v7h448l96 -96v-7M618 364v7"/>
+          <path d="M170 364V155M170 364H655M170 364l120 -120" strokeWidth="1"/>
+        </g>
+        <g opacity=".1" strokeWidth=".5">
+          {Array.from({ length: 19 }, (_, i) => <path key={i} d={`M${160 + i * 26} 150V410`}/>)}
+          {Array.from({ length: 11 }, (_, i) => <path key={i} d={`M160 ${150 + i * 26}H628`}/>)}
+        </g>
+        <g opacity=".3" strokeWidth=".7">
+          <path d="M215 174H589M215 168v12M589 168v12M187 209V343M181 209h12M181 343h12"/>
+          <path d="M215 275H589M400 190V365" strokeDasharray="5 6"/>
+          <circle cx="400" cy="275" r="65"/>
+          <circle cx="400" cy="275" r="40"/>
+          <path d="M210 340h390M215 204h374" strokeDasharray="2 5"/>
+          <path d="M205 352H594l24 -18H229zM205 352v7h389v-7M594 359l24 -18v-7"/>
+          {[260,400,535].map(x=><g key={x}><path d={`M${x} 158V375`} strokeDasharray="8 4 2 4"/><circle cx={x} cy="158" r="7"/></g>)}
+        </g>
+        <text x="400" y="340" textAnchor="middle" strokeWidth=".6" opacity=".13">eos</text>
+      </motion.g>
+      {fragments.map((_, i) => <Fragment key={i} index={i} clipId={`${id}-${i}`} assembly={trace} depth={depth} solid={solid} face={face}/>)}
+      <motion.g style={{opacity:envelopeOpacity}} clipPath={`url(#${id}-systems)`} stroke="var(--color-ink)" strokeWidth=".6">
+        {Array.from({length:15},(_,i)=><motion.path key={i} d={`M${210+i*28} 200V350`} style={{pathLength:envelope}}/>)}
+        <motion.path d="M210 242H600M210 290H600" style={{pathLength:envelope}}/>
+      </motion.g>
+    </g>
+
+  </svg>
+}
