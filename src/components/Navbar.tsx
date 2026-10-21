@@ -10,6 +10,12 @@ const links = [['/about','About'],['/portfolio','Portfolio'],['/studio','Studio'
 export function Navbar() {
   const menuTrigger = useRef<HTMLButtonElement|null>(null)
   const [open,setOpen] = useState(false)
+  const [hoverOpen,setHoverOpen] = useState(false)
+  const closeTimer=useRef<ReturnType<typeof setTimeout>|null>(null)
+  const cancelClose=()=>{if(closeTimer.current)clearTimeout(closeTimer.current)}
+  const holdOpen=()=>{cancelClose();setIntroOpen(false);setHoverOpen(true)}
+  const scheduleClose=()=>{cancelClose();closeTimer.current=setTimeout(()=>setHoverOpen(false),900)}
+  useEffect(()=>()=>{if(closeTimer.current)clearTimeout(closeTimer.current)},[])
   const path = usePathname()
   const [introOpen,setIntroOpen]=useState(false)
   useEffect(()=>{
@@ -23,7 +29,7 @@ export function Navbar() {
   return <>
     <a href="#main-content" className="skip-link">Vai al contenuto</a>
     <header className="site-header">
-      <nav className="logo-navigation" data-intro-open={introOpen || undefined} aria-label="Navigazione principale" onPointerEnter={()=>setIntroOpen(false)} onClick={()=>setIntroOpen(false)}>
+      <nav className="logo-navigation" data-intro-open={introOpen || hoverOpen || undefined} aria-label="Navigazione principale" onPointerEnter={holdOpen} onPointerLeave={scheduleClose} onFocusCapture={holdOpen} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))scheduleClose()}} onClick={()=>{cancelClose();setIntroOpen(false);setHoverOpen(false)}}>
         <div className="nav-wing nav-wing-left">{renderLinks(links.slice(0,3))}</div>
         <Link href="/" className="center-wordmark" aria-label="EOS — Homepage">eos</Link>
         <div className="nav-wing nav-wing-right">{renderLinks(links.slice(3))}</div>

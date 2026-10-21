@@ -1,3 +1,4 @@
+import { getProjectSchema } from '@/src/utils/supabase/project-schema'
 import { requireAdmin } from '@/src/utils/supabase/admin'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -34,14 +35,18 @@ export default async function ProgettiPage({ searchParams }: Props) {
   const { error: errorParam, edit: editId, q: qParam } = await searchParams
   const q = (qParam ?? '').trim()
 
-  let query = supabase
-    .from('projects')
-    .select('id, title, description, images, tags, is_featured, created_at')
-  if (q) {
-    const safe = q.replace(/[,()%]/g, ' ').trim()
-    query = query.or(`title.ilike.%${safe}%,description.ilike.%${safe}%`)
-  }
-  const { data: projects, error: loadError } = await query.order('created_at', { ascending: false })
+  let projects:Project[]=[]
+  let loadError=false
+  let schema={tags:false,is_featured:false}
+  try {
+    schema=await getProjectSchema(supabase)
+    const columns=['id','title','description','images','created_at',...(schema.tags?['tags']:[]),...(schema.is_featured?['is_featured']:[])].join(',')
+    let query=supabase.from('projects').select(columns)
+    if(q){const safe=q.replace(/[,()%]/g,' ').trim();query=query.or(`title.ilike.%${safe}%,description.ilike.%${safe}%`)}
+    const {data,error}=await query.order('created_at',{ascending:false}).abortSignal(AbortSignal.timeout(5000))
+    if(error)throw error
+    projects=(data??[]) as unknown as Project[]
+  } catch {loadError=true}
 
   const editing = editId ? projects?.find((p) => p.id === editId) ?? null : null
 
@@ -58,7 +63,8 @@ export default async function ProgettiPage({ searchParams }: Props) {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-10">
-        {loadError && <p role="alert" className="mb-6 rounded-lg bg-red-50 p-4 text-red-700">Impossibile caricare i progetti. Verifica la connessione Supabase e che le migrazioni per etichette e progetti in evidenza siano state applicate.</p>}
+        {loadError && <p role="alert" className="mb-6 rounded-lg bg-red-50 p-4 text-red-700">I progetti non sono raggiungibili in questo momento. I dati esistenti non sono stati modificati. Ricarica la pagina dopo aver verificato che Supabase sia attivo.</p>}
+        {!loadError&&(!schema.tags||!schema.is_featured)&&<p role="status" className="mb-6 rounded-lg bg-amber-50 p-4 text-sm text-amber-900">Puoi gestire titoli, descrizioni e fotografie. Per attivare {(!schema.tags&&!schema.is_featured)?'etichette e selezione in evidenza':!schema.tags?'le etichette':'la selezione in evidenza'} è necessario completare l’aggiornamento del database.</p>}
         {errorParam && ERROR_MESSAGES[errorParam] && (
           <div className="mb-6 px-4 py-3 rounded-panel bg-red-50 border border-red-200 text-sm text-red-700">
             {ERROR_MESSAGES[errorParam]}
@@ -70,7 +76,7 @@ export default async function ProgettiPage({ searchParams }: Props) {
           <div className="glass rounded-card shadow-soft p-6 lg:sticky lg:top-6">
             <h2 className="text-base font-bold text-ink mb-5">Nuovo progetto</h2>
             <form action={addProject} className="space-y-4">
-              <fieldset disabled={!!loadError}><ProjectFields /></fieldset>
+              <fieldset disabled={!!loadError}><ProjectFields schema={schema}/></fieldset>
               <button
                 type="submit"
                 disabled={!!loadError}
@@ -84,7 +90,7 @@ export default async function ProgettiPage({ searchParams }: Props) {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-bold text-ink">Progetti</h2>
-              <span className="text-sm text-muted">{projects?.length ?? 0} totali</span>
+              <span className="text-sm text-muted">{loadError?'—':projects.length} totali</span>
             </div>
             <div className="mb-4">
               <SearchBox action="/admin/contenuti/progetti" defaultValue={q} placeholder="Cerca per titolo o descrizione…" />
@@ -93,7 +99,7 @@ export default async function ProgettiPage({ searchParams }: Props) {
             {!projects || projects.length === 0 ? (
               <div className="glass rounded-card shadow-soft px-6 py-12 text-center">
                 <p className="text-sm text-muted">
-                  {q ? `Nessun risultato per «${q}».` : 'Nessun progetto ancora. Aggiungine uno con il form.'}
+                  {loadError?'Elenco temporaneamente non disponibile.':q ? `Nessun risultato per «${q}».` : 'Nessun progetto ancora. Aggiungine uno con il form.'}
                 </p>
               </div>
             ) : (
@@ -175,7 +181,7 @@ export default async function ProgettiPage({ searchParams }: Props) {
         <Modal title="Modifica progetto" closeHref="/admin/contenuti/progetti">
           <form action={updateProject} className="space-y-4">
             <input type="hidden" name="id" value={editing.id} />
-            <ProjectFields values={editing} />
+            <ProjectFields values={editing} schema={schema}/>
             <div className="flex items-center gap-3 pt-1">
               <Link
                 href="/admin/contenuti/progetti"

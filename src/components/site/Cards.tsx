@@ -9,6 +9,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 import type { PublicCard } from './ContentCards'
 import { ApplicationForm } from './ApplicationForm'
+import { TeamProfile } from './TeamProfile'
 import { GlassDialog } from './GlassDialog'
 import { Blueprint } from './Blueprint'
 import { ProjectCarousel } from './ProjectCarousel'
@@ -39,11 +40,13 @@ export function Cards({kind = 'projects', limit, data, applicationsEnabled = fal
       </motion.button>)}
     </div>
     {kind==='projects' && !data && <p className="sample-note">Selezione illustrativa — progetti e immagini in corso di definizione</p>}
-    {item && <GlassDialog title={item.title} onClose={close} returnFocus={trigger}>
+    {item && <GlassDialog title={item.title} onClose={close} returnFocus={trigger} variant={kind==='team'?'team':undefined}>
+      {kind==='team'?<TeamProfile key={item.id} item={item}/>:<>
       {(kind==='projects'?projectLabels(item):[item.category]).map(label=><span key={label} className="category-chip" style={{marginRight:8}}>{label}</span>)}
       {item.images?.length ? kind==='projects' ? <ProjectCarousel key={item.id} images={item.images} title={item.title}/> : <div className="detail-gallery">{item.images.map(url=><Image key={url} src={url} alt={item.title} width={1200} height={800} sizes="(max-width:760px) 90vw, 700px" className="detail-photo"/>)}</div> : kind==='projects' && <div className={`dialog-art variant-${item.variant}`}><Blueprint compact/></div>}
       <p className="body-copy" style={{whiteSpace:'pre-line'}}>{item.description||lorem}</p>
       {kind==='jobs' ? applicationsEnabled ? <ApplicationForm jobId={item.id}/> : <p className="body-copy">Per informazioni sulla posizione, scrivi a <a href="mailto:eos@eosweb.it">eos@eosweb.it</a>. L’invio delle candidature dal sito sarà disponibile a breve.</p> : <Link className="pill-button" href="/contatti">Parliamone insieme <ArrowIcon/></Link>}
+      </>}
     </GlassDialog>}
   </>
 }

@@ -1,3 +1,4 @@
+import type { ProjectSchema } from '@/src/lib/project-schema'
 import { PROJECT_TAGS } from '@/src/lib/project-tags'
 import { ProjectImages } from '../../_components/ProjectImages'
 
@@ -12,7 +13,7 @@ export type ProjectValues = {
   tags?: string[] | null
 }
 
-export function ProjectFields({ values, dark = false }: { values?: ProjectValues; dark?: boolean }) {
+export function ProjectFields({ values, dark = false, schema={tags:true,is_featured:true} }: { values?: ProjectValues; dark?: boolean; schema?:ProjectSchema }) {
   const labelCls = `block text-sm font-medium mb-1.5 ${dark ? 'text-white' : 'text-ink-soft'}`
 
   return (
@@ -48,8 +49,8 @@ export function ProjectFields({ values, dark = false }: { values?: ProjectValues
         />
       </div>
 
-      <label className={labelCls}><input type="checkbox" name="is_featured" defaultChecked={values?.is_featured??false}/> ★ In evidenza nel carosello Portfolio</label>
-      <fieldset>
+      <label className={labelCls}><input disabled={!schema.is_featured} type="checkbox" name="is_featured" defaultChecked={values?.is_featured??false}/> ★ In evidenza nel carosello Portfolio</label>
+      <fieldset disabled={!schema.tags} className={!schema.tags?'opacity-50':undefined}>
         <legend className={labelCls}>Etichette del progetto</legend>
         <p className="text-xs text-muted mb-3">Seleziona una o più etichette: saranno utilizzate nei filtri del Portfolio. Senza etichette il progetto resta visibile in Tutti.</p>
         <div className="flex flex-wrap gap-2">

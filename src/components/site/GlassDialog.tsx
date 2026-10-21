@@ -5,7 +5,7 @@ import { ArrowIcon } from '@/src/components/site/ArrowIcon'
 
 import { useEffect, useId, useRef, type ReactNode, type RefObject } from 'react'
 
-export function GlassDialog({ title, children, onClose, returnFocus }: { title: string; children: ReactNode; onClose: () => void; returnFocus?: RefObject<HTMLButtonElement | null> }) {
+export function GlassDialog({ title, children, onClose, returnFocus, variant }: { title: string; variant?:'team'; children: ReactNode; onClose: () => void; returnFocus?: RefObject<HTMLButtonElement | null> }) {
   const titleId = useId()
   const ref = useRef<HTMLDialogElement>(null)
   useEffect(() => {
@@ -16,7 +16,7 @@ export function GlassDialog({ title, children, onClose, returnFocus }: { title: 
     document.body.style.overflow = 'hidden'
     return () => { dialog.close(); document.body.style.overflow = overflow; requestAnimationFrame(() => previous?.focus({preventScroll:true})) }
   }, [returnFocus])
-  return <dialog ref={ref} className="detail-dialog" style={{backdropFilter: 'var(--dialog-glass-filter, blur(20px) saturate(135%) brightness(1.08))', WebkitBackdropFilter: 'var(--dialog-glass-filter, blur(20px) saturate(135%) brightness(1.08))'}}
+  return <dialog ref={ref} className={`detail-dialog${variant==='team'?' team-dialog':''}`} style={{backdropFilter: 'var(--dialog-glass-filter, blur(20px) saturate(135%) brightness(1.08))', WebkitBackdropFilter: 'var(--dialog-glass-filter, blur(20px) saturate(135%) brightness(1.08))'}}
     onPointerMove={event => {
       if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
       const panel = event.currentTarget
@@ -31,8 +31,8 @@ export function GlassDialog({ title, children, onClose, returnFocus }: { title: 
     aria-labelledby={titleId} onCancel={e => {e.preventDefault(); onClose()}} onClick={e => { if(e.target !== e.currentTarget) return; const bounds=e.currentTarget.getBoundingClientRect(); if(e.clientX<bounds.left||e.clientX>bounds.right||e.clientY<bounds.top||e.clientY>bounds.bottom) onClose() }}>
     <div className="dialog-toolbar"><button type="button" autoFocus className="dialog-back" onClick={onClose}><ArrowIcon direction="left"/> Indietro</button></div>
     <div className="dialog-interior">
-      <p className="eyebrow" style={{marginBottom:20}}>EOS / APPROFONDIMENTO</p>
-      <h2 id={titleId}>{title}</h2>
+      {variant!=='team'&&<p className="eyebrow" style={{marginBottom:20}}>EOS / APPROFONDIMENTO</p>}
+      <h2 className={variant==='team'?'sr-only':undefined} id={titleId}>{title}</h2>
       {children}
     </div>
   </dialog>

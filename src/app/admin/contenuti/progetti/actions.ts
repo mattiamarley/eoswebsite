@@ -1,5 +1,6 @@
 'use server'
 
+import { getProjectSchema } from '@/src/utils/supabase/project-schema'
 import { publicImagePath } from '@/src/lib/image-security'
 import { parseProjectTags } from '@/src/lib/project-tags'
 import { validRecordId, validContentForm } from '@/src/lib/security'
@@ -46,8 +47,11 @@ export async function addProject(formData: FormData) {
   let insertError: unknown = null
   try {
     const tags = parseProjectTags(formData.getAll('tags'))
+    const schema=await getProjectSchema(supabase)
+    if((!schema.tags&&tags.length)||(!schema.is_featured&&formData.get('is_featured')==='on')) throw new Error('Aggiornamento database necessario.')
+    const metadata={...(schema.tags?{tags}:{}),...(schema.is_featured?{is_featured:formData.get('is_featured')==='on'}:{})}
     const images = await resolveImages(supabase, formData, [], uploaded)
-    const { error } = await supabase.from('projects').insert({ title, description, images, tags, is_featured: formData.get('is_featured')==='on' })
+    const { error } = await supabase.from('projects').insert({ title, description, images, ...metadata })
     if (error) insertError = error
   } catch (err) {
     insertError = err
@@ -78,12 +82,15 @@ export async function updateProject(formData: FormData) {
   let updateError: unknown = null
   try {
     const tags = parseProjectTags(formData.getAll('tags'))
+    const schema=await getProjectSchema(supabase)
+    if((!schema.tags&&tags.length)||(!schema.is_featured&&formData.get('is_featured')==='on')) throw new Error('Aggiornamento database necessario.')
+    const metadata={...(schema.tags?{tags}:{}),...(schema.is_featured?{is_featured:formData.get('is_featured')==='on'}:{})}
     const { data: previous, error: readError } = await supabase.from('projects').select('images').eq('id',id).single()
     if(readError||!previous) throw new Error('Progetto non disponibile.')
     const images = await resolveImages(supabase, formData, previous.images??[], uploaded)
     const { error } = await supabase
       .from('projects')
-      .update({ title, description, images, tags, is_featured: formData.get('is_featured')==='on' })
+      .update({ title, description, images, ...metadata })
       .eq('id', id)
     if (error) updateError = error
   } catch (err) {

@@ -36,8 +36,8 @@ export async function ContentCards({kind,limit,portfolioPage=false,featured=fals
       return {description:typeof row.description==='string'?row.description:undefined,is_featured:row.is_featured===true,id:String(row.id),title:String(row.full_name??row.title??'EOS'),category:String(row.job_tag??row.category??(kind==='projects'?'Progetto EOS':'Il team')),subtitle:String(row.location??''),variant:index%3,...(kind==='projects'?{tags:Array.isArray(row.tags)?row.tags.filter((tag):tag is string=>typeof tag==='string'):[]}:{}),images:images.filter((url):url is string=>typeof url==='string' && publicImagePath(url,origin)!==null)}
     })
   } catch { failed=true }
-  if(featured && !failed) return <FeaturedProjects items={items}/>
-  if(featured && failed && process.env.NODE_ENV==='development') return <FeaturedProjects items={[]}/>
+  if(featured && !failed) return <FeaturedProjects items={items} previewOnly/>
+  if(featured && failed && process.env.NODE_ENV==='development') return <FeaturedProjects items={[]} previewOnly/>
   if(failed && kind==='projects' && process.env.NODE_ENV==='development') return portfolioPage?<SamplePortfolio/>:<Cards kind="projects" limit={limit} animateEntrance={!!limit}/>
   if(failed) return <div className="empty-state"><p>Contenuti temporaneamente non disponibili.</p><a className="pill-button" href="mailto:eos@eosweb.it">Contatta lo studio <ArrowIcon/></a></div>
   if(!items.length) return <div className="empty-state"><p>{kind==='jobs'?'Al momento non ci sono posizioni aperte.':kind==='team'?'Il team sarà presentato qui a breve.':'Il portfolio è in aggiornamento.'}</p></div>

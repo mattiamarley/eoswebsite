@@ -1,3 +1,5 @@
+> Aggiornamento 21 ottobre 2026: vedere [verifica corrente](docs/VERIFICA-2026-10-21.md). Il testo seguente documenta il controllo precedente.
+
 # Verifica EOS — 3 ottobre 2026
 
 Esito: versione di sviluppo migliorata, non ancora approvata per pubblicazione con dati reali. Questa verifica non è un penetration test né una certificazione di conformità.
