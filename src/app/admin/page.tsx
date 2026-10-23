@@ -13,7 +13,7 @@ async function signOut() {
 export default async function AdminPage() {
   const { supabase, user } = await requireAdmin()
 
-  const { count } = await supabase
+  const { count, error: applicationsError } = await supabase
     .from('applications')
     .select('id', { count: 'exact', head: true })
     .eq('status', 'nuova')
@@ -64,7 +64,7 @@ export default async function AdminPage() {
             <div>
               <h2 className="text-base font-bold text-ink">Candidature</h2>
               <p className="mt-1 text-sm text-muted leading-relaxed">
-                {nuove > 0
+                {applicationsError ? 'Conteggio candidature temporaneamente non disponibile.' : nuove > 0
                   ? `${nuove} ${nuove === 1 ? 'nuova candidatura' : 'nuove candidature'} da esaminare.`
                   : 'Gestisci ed esamina le candidature ricevute.'}
               </p>

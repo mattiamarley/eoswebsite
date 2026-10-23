@@ -27,6 +27,7 @@ const FILTERS = [
 ] as const
 
 const ERROR_MESSAGES: Record<string, string> = {
+  has_applications: 'Non è possibile eliminare una posizione con candidature o verificarne l’assenza. Chiudi la posizione per conservarne lo storico.',
   invalid_input: 'Dati non validi o troppo lunghi. Controlla i campi e riprova.',
   missing_title: 'Il titolo è obbligatorio.',
   insert_failed: 'Errore durante l\'inserimento. Riprova.',

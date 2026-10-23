@@ -102,6 +102,8 @@ export async function deleteJob(formData: FormData) {
   const id = formData.get('id') as string
   if(!validRecordId(id)) redirect('/admin/contenuti/lavoro?error=invalid_input')
 
+  const {count:applications,error:applicationsError}=await supabase.from('applications').select('id',{count:'exact',head:true}).eq('job_id',id)
+  if(applicationsError || applications) redirect('/admin/contenuti/lavoro?error=has_applications')
   let deleteError: unknown = null
   try {
     const { error } = await supabase.from('jobs').delete().eq('id', id)

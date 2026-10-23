@@ -719,3 +719,6 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 .team-order-tools button:focus-visible,.team-order-save:focus-visible{outline:3px solid #8875b8;outline-offset:3px}
 @media(max-width:800px){.team-order-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}
 @media(max-width:420px){.team-order-label{padding:14px}.team-order-label strong{font-size:14px}.team-order-label span{font-size:12px}.team-order-preview{border-radius:22px}}
+.application-name-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.application-form textarea{width:100%;padding:14px 18px;border:1px solid #d9dbea;border-radius:16px;background:#ffffffc9;color:var(--ink);font:inherit;resize:vertical}
+@media(max-width:600px){.application-name-grid{grid-template-columns:1fr}}
