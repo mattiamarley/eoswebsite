@@ -41,3 +41,9 @@ Backend → Contenuti → Lavoro: livello facoltativo, RAL annua in euro e massi
 La pagina Jobs apre un modulo interno anche per la candidatura spontanea. Stessi dati obbligatori, controlli, CV privati e limiti della candidatura a una posizione. Il backend distingue il tipo `spontaneous`, raggruppa sotto “Candidatura spontanea” e offre un filtro dedicato. Ogni offerta ha la CTA “Candidati a questa posizione”; categoria, sede, livello e RAL sono raccolti sotto il titolo a sinistra.
 
 Applicare `20261023_spontaneous_applications.sql` dopo la migrazione candidature. In alternativa `docs/SUPABASE-AGGIORNAMENTO-COMPLETO.sql` contiene tutte le migrazioni candidature, RAL, spontanee e carosello About ed è riapplicabile. Non è stato eseguito sul progetto remoto in questa sessione.
+
+## Diagnosi del 23 ottobre: Hub candidature
+
+Verifica dello schema con richieste `limit=0`, senza leggere dati dei candidati: nel progetto configurato manca `applications.application_type` (42703). Le richieste anonime ai campi presenti restituiscono permesso negato, come previsto per una tabella privata. Il caricamento dell’hub ora ritenta senza il solo campo opzionale mancante, mantenendo filtri e paginazione. Il filtro spontanee resta disabilitato fino alla migrazione; errori di permessi o connessione non attivano la compatibilità.
+
+Per completare l’attivazione eseguire `supabase/migrations/20261023_spontaneous_applications.sql` oppure l’SQL completo aggiornato. Nessuna modifica remota eseguita.

@@ -1,6 +1,8 @@
 import { requireAdmin } from '@/src/utils/supabase/admin'
 import Link from 'next/link'
 import { toggleFavorite, updateStatus } from './actions'
+import { applicationLoadMessage } from '@/src/lib/application-schema'
+import { loadApplications } from '@/src/utils/supabase/applications'
 import { validRecordId } from '@/src/lib/security'
 
 const statuses=[['nuova','Nuova'],['letta','Letta'],['in_valutazione','In valutazione']] as const
@@ -15,13 +17,10 @@ export default async function CandidaturePage({searchParams}:{searchParams:Promi
   const job=params.job==='spontaneous'?'spontaneous':validRecordId(params.job)?params.job:''
   const page=Math.min(10000,Math.max(1,Number.parseInt(params.page??'1',10)||1))
   const href=(changes:Record<string,string>)=>{const next=new URLSearchParams({tab,q,job,...changes});return `/admin/candidature?${next}`}
-  let query=supabase.from('applications').select('id,application_type,job_id,applicant_name,email,phone,message,job_title,documents,status,is_favorite,created_at,privacy_accepted_at,jobs(title)',{count:'exact'}).order('created_at',{ascending:false}).order('id')
-  if(tab==='nuove')query=query.eq('status','nuova')
-  if(tab==='preferite')query=query.eq('is_favorite',true)
-  if(job==='spontaneous')query=query.eq('application_type','spontaneous')
-  else if(job)query=query.eq('job_id',job)
-  if(q){const safe=q.replace(/[^\p{L}\p{N}@.\s+-]/gu,' ').trim();if(safe)query=query.or(`applicant_name.ilike.%${safe}%,email.ilike.%${safe}%`)}
-  const [{data,error,count},{data:jobs,error:jobsError}]=await Promise.all([query.range((page-1)*25,page*25-1),supabase.from('jobs').select('id,title,is_open').order('title')])
+  const [{data,error,count,legacy,unsupportedFilter},{data:jobs,error:jobsError}]=await Promise.all([
+    loadApplications(supabase,{tab,job,q,page}),
+    supabase.from('jobs').select('id,title,is_open').order('title').abortSignal(AbortSignal.timeout(8000))
+  ])
   const applications=(data??[]) as unknown as Application[]
   const groups=new Map<string,{title:string;items:Application[]}>()
   for(const app of applications){const key=app.application_type==='spontaneous'?'spontaneous':app.job_id??app.job_title??'deleted';if(!groups.has(key))groups.set(key,{title:app.application_type==='spontaneous'?'Candidatura spontanea':app.job_title||app.jobs?.title||'Posizione non più presente',items:[]});groups.get(key)!.items.push(app)}
@@ -31,9 +30,10 @@ export default async function CandidaturePage({searchParams}:{searchParams:Promi
       <h1 className="text-2xl font-bold text-ink">Hub candidature</h1><p className="text-sm text-muted mt-2 mb-6">Contatti, curriculum e presentazione, raccolti per posizione e per candidatura spontanea.</p>
       {params.error&&<p role="alert" className="rounded-xl p-4 mb-5 bg-red-50 text-red-700">Modifica non salvata. Ricarica e riprova.</p>}
       <nav className="flex flex-wrap gap-2 mb-5" aria-label="Viste candidature">{tabs.map(([key,label])=><Link key={key} href={href({tab:key,page:'1'})} aria-current={tab===key?'page':undefined} className={`rounded-full px-5 py-2 text-sm border ${tab===key?'bg-ink text-white':'glass text-ink'}`}>{label}</Link>)}</nav>
-      <form className="glass rounded-card p-5 grid gap-4 md:grid-cols-[1fr_1fr_auto] mb-7" action="/admin/candidature"><input type="hidden" name="tab" value={tab}/><label className="text-sm text-ink">Cerca candidato<input className={inputClass} name="q" defaultValue={q} placeholder="Nome, cognome o email" maxLength={120}/></label><label className="text-sm text-ink">Posizione<select className={inputClass} name="job" defaultValue={job}><option value="">Tutte le candidature</option><option value="spontaneous">Candidature spontanee</option>{jobs?.map(position=><option key={position.id} value={position.id}>{position.title}{position.is_open?'':' · Chiusa'}</option>)}</select></label><button className="team-order-save self-end" type="submit">Filtra</button></form>
+      <form className="glass rounded-card p-5 grid gap-4 md:grid-cols-[1fr_1fr_auto] mb-7" action="/admin/candidature"><input type="hidden" name="tab" value={tab}/><label className="text-sm text-ink">Cerca candidato<input className={inputClass} name="q" defaultValue={q} placeholder="Nome, cognome o email" maxLength={120}/></label><label className="text-sm text-ink">Posizione<select className={inputClass} name="job" defaultValue={job}><option value="">Tutte le candidature</option><option value="spontaneous" disabled={legacy}>Candidature spontanee{legacy?' · Da attivare':''}</option>{jobs?.map(position=><option key={position.id} value={position.id}>{position.title}{position.is_open?'':' · Chiusa'}</option>)}</select></label><button className="team-order-save self-end" type="submit">Filtra</button></form>
+      {legacy&&(!error||unsupportedFilter)&&<p role="status" className="rounded-xl bg-amber-50 text-amber-900 p-4 mb-5 text-sm">Le candidature esistenti restano consultabili. Per attivare anche quelle spontanee, esegui l’aggiornamento candidature spontanee su Supabase.</p>}
       {jobsError&&<p role="status" className="text-red-700 mb-4">Filtro posizioni temporaneamente non disponibile.</p>}
-      {error?<div role="alert" className="glass rounded-card p-6 text-red-700">Impossibile caricare le candidature. Verifica la connessione e la migrazione candidature su Supabase.</div>:<>
+      {unsupportedFilter?<div role="status" className="glass rounded-card p-6 text-ink">Il filtro delle candidature spontanee richiede l’aggiornamento del database. <Link href={href({job:'',page:'1'})} className="underline font-semibold">Visualizza le candidature esistenti</Link></div>:error?<div role="alert" className="glass rounded-card p-6 text-red-700">{applicationLoadMessage(error)}</div>:<>
         <p className="text-sm text-muted mb-5">{count??0} candidature trovate · pagina {page}</p>
         {!applications.length&&<div className="glass rounded-card p-8 text-center text-muted">Nessuna candidatura in questa vista.</div>}
         {[...groups].map(([key,group])=><section key={key} className="mb-8"><h2 className="font-bold text-lg text-ink mb-4">{group.title}</h2><ul className="space-y-4">{group.items.map(app=><li key={app.id} className="glass rounded-card shadow-soft p-6">
