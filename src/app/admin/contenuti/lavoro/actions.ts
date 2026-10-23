@@ -1,5 +1,7 @@
 'use server'
 
+import { parseCompensation } from '@/src/lib/job-compensation'
+import { hasJobCompensation } from '@/src/utils/supabase/job-schema'
 import { validRecordId, validContentForm } from '@/src/lib/security'
 import { requireAdmin } from '@/src/utils/supabase/admin'
 
@@ -29,7 +31,12 @@ export async function addJob(formData: FormData) {
   const { supabase } = await requireAdmin()
   if(!validContentForm(formData,{title:180,category:120,location:180,description:20000})) redirect('/admin/contenuti/lavoro?error=invalid_input')
 
-  const values = parseJob(formData)
+  const compensation=parseCompensation(formData)
+  if(!compensation) redirect('/admin/contenuti/lavoro?error=invalid_salary')
+  let compensationEnabled=false
+  try {compensationEnabled=await hasJobCompensation(supabase)}catch {redirect('/admin/contenuti/lavoro?error=load_failed')}
+  if(!compensationEnabled && (compensation.seniority || compensation.salary_min!==null || compensation.salary_max!==null))redirect('/admin/contenuti/lavoro?error=schema_missing')
+  const values = {...parseJob(formData),...(compensationEnabled?compensation:{})}
   if (!values.title) redirect('/admin/contenuti/lavoro?error=missing_title')
 
   // redirect() non va dentro try/catch: catturiamo l'errore prima di chiamarlo
@@ -56,7 +63,12 @@ export async function updateJob(formData: FormData) {
 
   const id = formData.get('id') as string
   if(!validRecordId(id)) redirect('/admin/contenuti/lavoro?error=invalid_input')
-  const values = parseJob(formData)
+  const compensation=parseCompensation(formData)
+  if(!compensation) redirect('/admin/contenuti/lavoro?error=invalid_salary')
+  let compensationEnabled=false
+  try {compensationEnabled=await hasJobCompensation(supabase)}catch {redirect('/admin/contenuti/lavoro?error=load_failed')}
+  if(!compensationEnabled && (compensation.seniority || compensation.salary_min!==null || compensation.salary_max!==null))redirect('/admin/contenuti/lavoro?error=schema_missing')
+  const values = {...parseJob(formData),...(compensationEnabled?compensation:{})}
   if (!values.title) redirect(`/admin/contenuti/lavoro?edit=${id}&error=missing_title`)
 
   let updateError: unknown = null

@@ -4,7 +4,7 @@
 
 - Da ogni posizione aperta: nome, cognome, email e CV PDF obbligatori; telefono, presentazione e portfolio facoltativi.
 - I dati, la posizione (ID e titolo al momento dell’invio) e i documenti sono salvati in una singola candidatura. Il primo documento è sempre il CV.
-- PDF fino a 3 MB ciascuno, al massimo due; firma PDF verificata sul server. La firma non sostituisce un controllo antivirus.
+- PDF fino a 3 MB ciascuno, al massimo due e 4 MB complessivi per compatibilità Netlify; firma PDF verificata sul server. La firma non sostituisce un controllo antivirus.
 - Upload in bucket privato, URL non pubblici. I download passano sempre dal controllo amministratore e generano link di 60 secondi.
 - Hub amministrativo: ricerca per nome/email, filtri posizione/nuove/preferite, paginazione di 25, contatti, presentazione, documenti e stato. Errori di caricamento e salvataggio visibili.
 - Le posizioni con candidature non vengono eliminate dal pannello: si chiudono conservando lo storico.
@@ -29,3 +29,9 @@
 ## Limiti della verifica locale
 
 Lint, compilazione TypeScript/produzione e test di validazione/documenti eseguiti. Non disponibili chiave server né sessione amministrativa Supabase: migrazione e upload/download reali non collaudati sul progetto remoto. Nessun dato personale reale inviato e nessuna policy remota modificata.
+
+## RAL e livello
+
+`docs/SUPABASE-CANDIDATURE-E-RAL.sql` riunisce le migrazioni candidature e retribuzione in una sola transazione, eseguibile anche dopo la precedente migrazione candidature. In alternativa applicare solo `supabase/migrations/20261023_job_compensation.sql` se quella candidature è già installata.
+
+Backend → Contenuti → Lavoro: livello facoltativo, RAL annua in euro e massimo facoltativo per una fascia. Gli importi sono numeri interi positivi; un unico importo viene presentato come RAL fissa. I dati esistenti non ricevono valori dimostrativi. Le nuove schede blu e i dettagli mostrano gli stessi dati.

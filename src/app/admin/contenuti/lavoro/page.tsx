@@ -1,3 +1,5 @@
+import { formatSalary } from '@/src/lib/job-compensation'
+import { hasJobCompensation } from '@/src/utils/supabase/job-schema'
 import { requireAdmin } from '@/src/utils/supabase/admin'
 import Link from 'next/link'
 import { addJob, updateJob, toggleJobStatus } from './actions'
@@ -12,6 +14,9 @@ type Job = {
   category: string | null
   location: string | null
   description: string | null
+  seniority?: string | null
+  salary_min?: number | null
+  salary_max?: number | null
   is_open: boolean | null
   created_at: string
 }
@@ -27,6 +32,9 @@ const FILTERS = [
 ] as const
 
 const ERROR_MESSAGES: Record<string, string> = {
+  invalid_salary: 'Controlla livello e RAL: importi annui interi positivi, con massimo non inferiore al minimo.',
+  schema_missing: 'Applica la migrazione livello e RAL su Supabase per salvare questi campi.',
+  load_failed: 'Impossibile verificare i campi della posizione. Riprova.',
   has_applications: 'Non è possibile eliminare una posizione con candidature o verificarne l’assenza. Chiudi la posizione per conservarne lo storico.',
   invalid_input: 'Dati non validi o troppo lunghi. Controlla i campi e riprova.',
   missing_title: 'Il titolo è obbligatorio.',
@@ -42,9 +50,12 @@ export default async function LavoroPage({ searchParams }: Props) {
   const q = (qParam ?? '').trim()
   const stato = FILTERS.some((f) => f.key === statoParam) ? (statoParam as string) : 'tutte'
 
+  let compensationEnabled=false
+  let schemaFailed=false
+  try {compensationEnabled=await hasJobCompensation(supabase)}catch {schemaFailed=true}
   let query = supabase
     .from('jobs')
-    .select('id, title, category, location, description, is_open, created_at')
+    .select('id,title,category,location,description,is_open,created_at'+(compensationEnabled?',seniority,salary_min,salary_max':''))
   if (q) {
     const safe = q.replace(/[,()%]/g, ' ').trim()
     query = query.or(
@@ -53,8 +64,9 @@ export default async function LavoroPage({ searchParams }: Props) {
   }
   if (stato === 'aperte') query = query.eq('is_open', true)
   if (stato === 'chiuse') query = query.eq('is_open', false)
-  const { data: jobs } = await query.order('created_at', { ascending: false })
+  const { data, error:loadError } = await query.order('created_at', { ascending: false })
 
+  const jobs=data as unknown as Job[]|null
   const editing = editId ? jobs?.find((j) => j.id === editId) ?? null : null
 
   const filterHref = (key: string) => {
@@ -78,6 +90,8 @@ export default async function LavoroPage({ searchParams }: Props) {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-10">
+        {(loadError||schemaFailed)&&<p role="alert" className="text-red-700 mb-5">Impossibile caricare o verificare le posizioni. Riprova.</p>}
+        {!compensationEnabled&&!schemaFailed&&<p role="status" className="rounded-xl bg-amber-50 text-amber-900 p-4 mb-5 text-sm">Livello e RAL saranno disponibili dopo la migrazione Supabase. Puoi continuare a gestire gli altri campi.</p>}
         {errorParam && ERROR_MESSAGES[errorParam] && (
           <div className="mb-6 px-4 py-3 rounded-panel bg-red-50 border border-red-200 text-sm text-red-700">
             {ERROR_MESSAGES[errorParam]}
@@ -91,7 +105,7 @@ export default async function LavoroPage({ searchParams }: Props) {
             <h2 className="text-base font-bold text-ink mb-5">Nuova posizione</h2>
 
             <form action={addJob} className="space-y-4">
-              <JobFields />
+              <JobFields compensationEnabled={compensationEnabled} />
 
               <button
                 type="submit"
@@ -106,7 +120,7 @@ export default async function LavoroPage({ searchParams }: Props) {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-bold text-ink">Posizioni</h2>
-              <span className="text-sm text-muted">{jobs?.length ?? 0} totali</span>
+              <span className="text-sm text-muted">{loadError?'—':jobs?.length ?? 0} totali</span>
             </div>
 
             <div className="mb-4 flex flex-col sm:flex-row sm:items-start gap-3">
@@ -138,7 +152,7 @@ export default async function LavoroPage({ searchParams }: Props) {
               </div>
             </div>
 
-            {!jobs || jobs.length === 0 ? (
+            {loadError ? null : !jobs || jobs.length === 0 ? (
               <div className="glass rounded-card shadow-soft px-6 py-12 text-center">
                 <p className="text-sm text-muted">
                   {q || stato !== 'tutte'
@@ -164,6 +178,7 @@ export default async function LavoroPage({ searchParams }: Props) {
                           </span>
                         )}
                       </div>
+                      {(job.seniority || job.salary_min) && <p className="mt-2 text-xs font-semibold text-ink">{[job.seniority,formatSalary({salary_min:job.salary_min??null,salary_max:job.salary_max??null})].filter(Boolean).join(' · ')}</p>}
                       {job.location && (
                         <p className="mt-1 text-xs font-medium text-muted">📍 {job.location}</p>
                       )}
@@ -202,7 +217,7 @@ export default async function LavoroPage({ searchParams }: Props) {
         <Modal title="Modifica posizione" closeHref="/admin/contenuti/lavoro">
           <form action={updateJob} className="space-y-4">
             <input type="hidden" name="id" value={editing.id} />
-            <JobFields values={editing} />
+            <JobFields values={editing} compensationEnabled={compensationEnabled} />
 
             <div className="flex items-center gap-3 pt-1">
               <Link

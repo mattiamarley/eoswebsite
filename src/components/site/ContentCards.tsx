@@ -4,14 +4,14 @@ import { PortfolioLayout, SamplePortfolio } from './PortfolioLayout'
 import { ArrowIcon } from '@/src/components/site/ArrowIcon'
 import { createClient } from '@/src/utils/supabase/server'
 import { Cards } from './Cards'
-export type PublicCard = {id:string;title:string;category:string;subtitle:string;description?:string;variant:number;images?:string[];tags?:string[];is_featured?:boolean}
+export type PublicCard = {id:string;title:string;category:string;subtitle:string;description?:string;variant:number;images?:string[];tags?:string[];is_featured?:boolean;seniority?:string;salary_min?:number;salary_max?:number}
 export async function ContentCards({kind,limit,portfolioPage=false,featured=false}: {featured?:boolean;portfolioPage?:boolean;kind:'projects'|'team'|'jobs';limit?:number}) {
   let items:PublicCard[] = []
   let failed = false
   try {
     const client = await createClient()
     const table = kind==='team'?'team_members':kind
-    let columns:string = kind==='team'?'id,full_name,job_tag,image_url,description':kind==='jobs'?'id,title,category,location,description':'id,title,images,tags,is_featured,description'
+    let columns:string = kind==='team'?'id,full_name,job_tag,image_url,description':kind==='jobs'?'id,title,category,location,description,seniority,salary_min,salary_max':'id,title,images,tags,is_featured,description'
     let query = client.from(table).select(columns).order(kind==='team'?'sort_order':'created_at',{ascending:kind==='team',nullsFirst:false}).order('created_at',{ascending:false}).order('id')
     if(kind==='jobs') query=query.eq('is_open',true)
     if(limit) query=query.limit(limit)
@@ -23,6 +23,11 @@ export async function ContentCards({kind,limit,portfolioPage=false,featured=fals
       if(limit) fallback=fallback.limit(limit)
       const result=await fallback.abortSignal(AbortSignal.timeout(3000))
       data=result.data; error=result.error
+    }
+    if(kind==='jobs' && error && ['42703','PGRST204'].includes(error.code) && /\b(seniority|salary_min|salary_max)\b/.test(error.message)) {
+      let fallback=client.from('jobs').select('id,title,category,location,description').eq('is_open',true).order('created_at',{ascending:false}).order('id')
+      if(limit)fallback=fallback.limit(limit)
+      const result=await fallback.abortSignal(AbortSignal.timeout(3000));data=result.data;error=result.error
     }
     // Preserve available metadata while either additive migration is pending.
     for(let attempt=0; kind==='projects' && error?.code==='42703' && attempt<2; attempt++) {
@@ -39,7 +44,7 @@ export async function ContentCards({kind,limit,portfolioPage=false,featured=fals
       const row=raw as unknown as Record<string,unknown>
       const images = kind==='team'?[row.image_url]:Array.isArray(row.images)?row.images:[]
       const origin = process.env.NEXT_PUBLIC_SUPABASE_URL
-      return {description:typeof row.description==='string'?row.description:undefined,is_featured:row.is_featured===true,id:String(row.id),title:String(row.full_name??row.title??'EOS'),category:String(row.job_tag??row.category??(kind==='projects'?'Progetto EOS':'Il team')),subtitle:String(row.location??''),variant:index%3,...(kind==='projects'?{tags:Array.isArray(row.tags)?row.tags.filter((tag):tag is string=>typeof tag==='string'):[]}:{}),images:images.filter((url):url is string=>typeof url==='string' && publicImagePath(url,origin)!==null)}
+      return {...(kind==='jobs'?{seniority:typeof row.seniority==='string'?row.seniority:undefined,salary_min:typeof row.salary_min==='number'?row.salary_min:undefined,salary_max:typeof row.salary_max==='number'?row.salary_max:undefined}:{}),description:typeof row.description==='string'?row.description:undefined,is_featured:row.is_featured===true,id:String(row.id),title:String(row.full_name??row.title??'EOS'),category:String(row.job_tag??row.category??(kind==='projects'?'Progetto EOS':'Il team')),subtitle:String(row.location??''),variant:index%3,...(kind==='projects'?{tags:Array.isArray(row.tags)?row.tags.filter((tag):tag is string=>typeof tag==='string'):[]}:{}),images:images.filter((url):url is string=>typeof url==='string' && publicImagePath(url,origin)!==null)}
     })
   } catch { failed=true }
   if(featured && !failed) return <FeaturedProjects items={items} previewOnly/>

@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'node:crypto'
 import { revalidatePath } from 'next/cache'
+import { applicationSizeError } from '@/src/lib/application-limits'
 import { applicationInput } from '@/src/lib/application-input'
 
 type State={success:boolean;message:string}
@@ -15,6 +16,8 @@ export async function submitApplication(_previous:State,form:FormData):Promise<S
   const {email,job_id:job}=input
   const files=[form.get('cv'),form.get('portfolio')].filter((f):f is File=>f instanceof File && f.size>0)
   if(!(form.get('cv') instanceof File)||!(form.get('cv') as File).size||!files.length||files.length>2||files.some(f=>f.type!=='application/pdf'||f.size>3*1024*1024)) return fail('Allega il curriculum in PDF (obbligatorio) e, se vuoi, un portfolio: massimo 3 MB ciascuno.')
+  const sizeError=applicationSizeError(files)
+  if(sizeError)return fail(sizeError)
   for(const f of files) if(Buffer.from(await f.slice(0,5).arrayBuffer()).toString()!=='%PDF-') return fail('Uno degli allegati non è un PDF valido.')
   const client=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}})
   const uploaded:string[]=[]
