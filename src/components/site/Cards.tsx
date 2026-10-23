@@ -20,6 +20,7 @@ export function Cards({kind = 'projects', limit, data, applicationsEnabled = fal
   const reduced=useReducedMotion()
   const trigger = useRef<HTMLButtonElement | null>(null)
   const [selected,setSelected] = useState<string|null>(null)
+  const [teamCount,setTeamCount]=useState(12)
   const [filter,setFilter] = useState('Tutti')
   const items:PublicCard[] = data ?? (kind === 'services' ? services.map((title,i)=>({id:`servizio-${i}`,title,category:'Competenza EOS',subtitle:'Progettazione integrata',variant:i%3})) : projects)
   useEffect(()=> {
@@ -30,7 +31,7 @@ export function Cards({kind = 'projects', limit, data, applicationsEnabled = fal
   const item = items.find(i=>i.id===selected)
   function open(id:string) { window.history.pushState({eosDetail:true},'',`#scheda=${id}`); setSelected(id) }
   function close() { if(window.history.state?.eosDetail) window.history.back(); else {window.history.replaceState(null,'',window.location.pathname+window.location.search);setSelected(null)} }
-  const shown = items.filter(i=>filter==='Tutti'||projectLabels(i).includes(filter)).slice(0,limit)
+  const shown = items.filter(i=>filter==='Tutti'||projectLabels(i).includes(filter)).slice(0,kind==='team'?teamCount:limit)
   return <>
     {kind==='projects' && !limit && <div className="filters" aria-label="Filtra progetti">{['Tutti',...new Set(items.flatMap(projectLabels))].map(c=><button key={c} aria-pressed={filter===c} onClick={()=>setFilter(c)}>{c}</button>)}</div>}
     <div className={`cards-grid ${kind}`}>
@@ -39,6 +40,7 @@ export function Cards({kind = 'projects', limit, data, applicationsEnabled = fal
         <div className="card-body"><span className="eyebrow">{kind==='projects'?((projectLabels(i)[0]||'Progetto EOS')+(projectLabels(i).length>1?` +${projectLabels(i).length-1}`:'')):i.category}</span><h3>{i.title}</h3>{kind!=='services' && <p>{i.subtitle}</p>}<span className="card-arrow" aria-hidden="true">{kind==='team'?<span className="team-plus">+</span>:<ArrowIcon/>}</span></div>
       </motion.button>)}
     </div>
+    {kind==='team'&&items.length>teamCount&&<div className="team-load-more"><button className="pill-button" onClick={()=>setTeamCount(count=>count+12)}>Carica altri</button><span className="sr-only" role="status">{shown.length} di {items.length} persone</span></div>}
     {kind==='projects' && !data && <p className="sample-note">Selezione illustrativa — progetti e immagini in corso di definizione</p>}
     {item && <GlassDialog title={item.title} onClose={close} returnFocus={trigger} variant={kind==='team'?'team':undefined}>
       {kind==='team'?<TeamProfile key={item.id} item={item}/>:<>

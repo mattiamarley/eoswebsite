@@ -722,3 +722,87 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 .application-name-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .application-form textarea{width:100%;padding:14px 18px;border:1px solid #d9dbea;border-radius:16px;background:#ffffffc9;color:var(--ink);font:inherit;resize:vertical}
 @media(max-width:600px){.application-name-grid{grid-template-columns:1fr}}
+/* About and Studio reference layouts */
+.about-reference{background:#fafafa}
+.reference-section-heading{text-align:center;margin-bottom:60px}
+.reference-section-heading h2{font-size:clamp(34px,4.6vw,66px);letter-spacing:-.04em;line-height:1.12}
+.reference-section-heading p{font-size:clamp(22px,2.8vw,38px);margin-top:6px}
+.about-services{padding-top:40px;padding-bottom:100px}
+.competencies-diagram{position:relative;max-width:1060px;margin:auto}
+.competencies-core{display:none}
+.competencies-diagram .cards-grid.services{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.competencies-diagram .content-card{min-height:92px;padding:20px 55px 20px 25px;border:1px solid #d9d9e4;background:linear-gradient(135deg,#ffffffdd,#ffffff60);box-shadow:inset 0 2px 4px white,0 8px 18px #19254d12;backdrop-filter:blur(20px)}
+.competencies-diagram .card-body{padding:0}
+.competencies-diagram .card-body h3{font-size:16px;line-height:1.25;margin:0;letter-spacing:-.02em}
+.competencies-diagram .eyebrow,.competencies-diagram .card-body p{display:none}
+.competencies-diagram .card-arrow{width:34px;height:34px;right:14px;bottom:calc(50% - 17px)}
+.about-numbers{margin:0 auto 70px;width:calc(100% - 48px);max-width:1360px;background:#0c1b46;color:white;border-radius:30px;padding:80px clamp(30px,7vw,120px) 60px}
+.about-number{max-width:660px;width:75%;margin-bottom:80px}
+.about-number-right{margin-left:auto;text-align:right}
+.about-number h2{font-size:clamp(44px,5vw,72px);line-height:1;letter-spacing:-.035em;color:white}
+.about-number h2 span{font-weight:400;font-size:.65em}
+.about-number h3{font-size:clamp(24px,3vw,40px);font-weight:400;letter-spacing:-.02em;margin-top:8px;color:white}
+.about-number p{font-size:16px;line-height:1.6;margin-top:28px;color:#e0e3ef}
+.about-ethics{text-align:center}
+.about-ethics .pill-button{background:#ffffff24;color:white;border-color:#ffffff90;min-width:190px;justify-content:center}
+.about-photo-showcase,.about-gallery-placeholder{position:relative;width:100%;height:clamp(260px,39vw,570px);overflow:hidden;background:#e5e5ee}
+.about-photo-slide{position:absolute;inset:0;opacity:0;transition:opacity 900ms ease}
+.about-photo-slide[data-active=true]{opacity:1}
+.about-photo-slide img{object-fit:cover}
+.about-photo-controls{position:absolute;bottom:22px;right:26px;display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid #ffffff70;border-radius:50px;background:#ffffff9c;backdrop-filter:blur(18px)}
+.about-photo-controls button{width:34px;height:34px;color:#182956;font-size:20px;display:grid;place-items:center}
+.about-photo-controls .about-photo-dot{width:26px;height:34px;position:relative}
+.about-photo-dot:after{content:'';width:7px;height:7px;border-radius:50%;background:#aaa3c2}
+.about-photo-dot[aria-pressed=true]:after{background:#41376e}
+.about-photo-controls button:focus-visible{outline:2px solid #41376e;border-radius:30px}
+.reference-closing{text-align:center;padding-top:140px;padding-bottom:140px}
+.reference-closing h2{font-size:clamp(34px,4.4vw,62px);line-height:1.1;letter-spacing:-.04em}
+.reference-closing-subtitle{font-size:clamp(23px,3vw,38px);margin-top:8px;line-height:1.25}
+.reference-closing .body-copy{max-width:770px;margin:70px auto 55px;text-align:justify;font-size:17px;line-height:1.6}
+.reference-closing .pill-button{min-width:230px;justify-content:center}
+.studio-members .card-body{justify-content:flex-end;padding:20px 55px 20px 20px;background:linear-gradient(180deg,transparent 35%,#070e239c 100%);color:white}
+.studio-members .card-body h3,.studio-members .card-body>.eyebrow{color:white}
+.studio-members .card-body h3{font-size:16px}
+.studio-members .card-body>.eyebrow{font-size:14px}
+.studio-members .card-arrow{width:28px;height:28px;bottom:20px;right:16px;background:#ffffff28;color:white;border:1px solid #ffffffb0;box-shadow:inset 0 1px 4px #fff8,0 5px 15px #0003;backdrop-filter:blur(18px)}
+.studio-members .cards-grid{gap:36px}
+.team-load-more{position:relative;display:flex;justify-content:center;margin-top:-30px;padding-top:70px;isolation:isolate}
+.team-load-more:before{content:'';position:absolute;left:-10px;right:-10px;bottom:10px;height:170px;background:linear-gradient(transparent,#fafafaf2 65%,#fafafa);z-index:-1;pointer-events:none}
+.team-load-more .pill-button{min-width:230px;justify-content:center}
+@media(min-width:1000px){
+ .competencies-diagram{height:540px}
+ .competencies-core{display:grid;place-items:center;position:absolute;left:24%;right:24%;top:190px;height:140px;border-radius:30px;background:#0c1b46;color:white;font-size:18px;box-shadow:0 35px 45px #14204424}
+ .competencies-diagram .cards-grid.services{display:contents}
+ .competencies-diagram .content-card{position:absolute;width:27%;height:104px;min-height:0;border-radius:32px;padding:22px 25px;text-align:center;overflow:visible;border-color:#17265066;border-bottom-color:#172650;backdrop-filter:blur(18px)}
+ .competencies-diagram .card-body h3{font-size:16px}
+ .competencies-diagram .card-arrow{bottom:-22px;left:calc(50% - 22px);right:auto;width:44px;height:44px}
+ .competencies-diagram .card-arrow svg{display:none}
+ .competencies-diagram .card-arrow:after{content:'+';font-size:32px;font-weight:300;color:white;line-height:1}
+ .competencies-diagram .content-card:nth-child(1){left:4%;top:65px}
+ .competencies-diagram .content-card:nth-child(2){left:36.5%;top:25px}
+ .competencies-diagram .content-card:nth-child(3){right:4%;top:65px}
+ .competencies-diagram .content-card:nth-child(4){left:0;top:208px}
+ .competencies-diagram .content-card:nth-child(5){right:0;top:208px}
+ .competencies-diagram .content-card:nth-child(6){left:4%;top:350px}
+ .competencies-diagram .content-card:nth-child(7){left:36.5%;top:390px}
+ .competencies-diagram .content-card:nth-child(8){right:4%;top:350px}
+}
+@media(max-width:700px){
+ .about-services{padding-bottom:60px}
+ .reference-section-heading{margin-bottom:35px}
+ .competencies-diagram .cards-grid.services{grid-template-columns:1fr;gap:16px}
+ .competencies-diagram .content-card{min-height:70px}
+ .about-numbers{width:calc(100% - 24px);padding:45px 28px;border-radius:24px;margin-bottom:45px}
+ .about-number{width:100%;margin-bottom:55px}
+ .about-number p{font-size:14px}
+ .reference-closing{padding-top:80px;padding-bottom:85px}
+ .reference-closing .body-copy{margin:40px auto;font-size:15px}
+ .studio-members .cards-grid{gap:20px}
+ .studio-members .card-body{padding:16px 42px 16px 14px}
+ .studio-members .card-body h3{font-size:14px}
+ .studio-members .card-body>.eyebrow{font-size:12px}
+ .studio-members .card-arrow{right:10px;bottom:16px;width:26px;height:26px}
+}
+@media(prefers-reduced-motion:reduce){.about-photo-slide{transition:none}}
+.competencies-diagram .card-body{position:static}
+@media(max-width:600px){.about-photo-controls{right:12px;left:12px;justify-content:center;gap:2px}.about-photo-controls button{flex-shrink:0;width:28px}.about-photo-controls .about-photo-dot{width:auto;min-width:12px;flex:1;max-width:26px}}

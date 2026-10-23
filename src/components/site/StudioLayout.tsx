@@ -18,7 +18,7 @@ export function StudioLayout() {
     <section className="studio-crew section-wrap" aria-labelledby="studio-crew-title">
       <ScrollReveal className="studio-heading"><h2 id="studio-crew-title">EOS Studio.</h2><p>L’equipaggio.</p></ScrollReveal>
       <div className="studio-members"><Suspense fallback={<ContentLoading label="Caricamento team"/>}><ContentCards kind="team"/></Suspense></div>
-      <div className="studio-join"><Link className="pill-button" href="/jobs">Sali a bordo</Link></div>
+      <section className="reference-closing"><ScrollReveal><h2>Il prossimo passo, insieme.</h2><p className="reference-closing-subtitle">Entra a far parte della squadra.</p><p className="body-copy">{lorem}</p><Link className="pill-button" href="/jobs">Sali a bordo</Link></ScrollReveal></section>
     </section>
   </div>
 }

@@ -8,6 +8,7 @@ import { PageHeading, ContactBanner } from '@/src/components/site/Sections'
 import { Cards } from '@/src/components/site/Cards'
 import { ContentCards } from '@/src/components/site/ContentCards'
 import { lorem } from '@/src/lib/site-content'
+import { AboutLayout } from '@/src/components/site/AboutLayout'
 import { StudioLayout } from '@/src/components/site/StudioLayout'
 const sections: Record<string,[string,string]> = {
   about:['Progettazione integrata','Competenze diverse, una direzione condivisa'],
@@ -23,6 +24,7 @@ export default async function SectionPage({params}: {params:Promise<{section:str
   const {section}=await params
   if(!sections[section]) notFound()
   if(section==='portfolio')return <ContentCards kind="projects" portfolioPage/>
+  if(section==='about')return <AboutLayout/>
   if(section==='studio')return <StudioLayout/>
   const [title,subtitle]=sections[section]
   return <><PageHeading eyebrow={`EOS / ${section.includes('policy')?'INFORMAZIONI':section}`} title={title} subtitle={subtitle}/><div className="section-wrap page-content">
