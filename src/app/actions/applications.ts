@@ -22,11 +22,15 @@ export async function submitApplication(_previous:State,form:FormData):Promise<S
   const client=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}})
   const uploaded:string[]=[]
   try {
-    const {data:position,error:jobError}=await client.from('jobs').select('id,title').eq('id',job).eq('is_open',true).maybeSingle()
-    if(jobError||!position) return fail('Questa posizione non è più disponibile.')
+    let jobTitle='Candidatura spontanea'
+    if(job){
+      const {data:position,error:jobError}=await client.from('jobs').select('id,title').eq('id',job).eq('is_open',true).maybeSingle()
+      if(jobError||!position) return fail('Questa posizione non è più disponibile.')
+      jobTitle=position.title
+    }
     // Atomic database throttle works across server instances. Requires the supplied migration.
     const {data:allowed,error:limitError}=await client.rpc('allow_application_submission',{email_hash:createHash('sha256').update(email).digest('hex')})
-    if(limitError||!allowed) return fail('Non è possibile inviare ora. Riprova più tardi o scrivi a eos@eosweb.it.')
+    if(limitError||!allowed) return fail('Non è possibile inviare ora. Riprova più tardi.')
     const id=crypto.randomUUID()
     for(const f of files) {
       const path=`${id}/${crypto.randomUUID()}.pdf`
@@ -34,12 +38,12 @@ export async function submitApplication(_previous:State,form:FormData):Promise<S
       if(error) throw error
       uploaded.push(path)
     }
-    const {error}=await client.from('applications').insert({id,...input,job_title:position.title,documents:uploaded,status:'nuova',privacy_accepted_at:new Date().toISOString(),privacy_version:'recruitment-v1'})
+    const {error}=await client.from('applications').insert({id,...input,job_title:jobTitle,documents:uploaded,status:'nuova',privacy_accepted_at:new Date().toISOString(),privacy_version:'recruitment-v1'})
     if(error) throw error
     revalidatePath('/admin/candidature');revalidatePath('/admin')
     return {success:true,message:'Grazie per averci scritto. Il team esaminerà il tuo profilo.'}
   } catch {
     if(uploaded.length) await client.storage.from('applications-docs').remove(uploaded).catch(()=>console.error('[applications] cleanup failed'))
-    return fail('Invio non riuscito. Riprova più tardi o contattaci a eos@eosweb.it.')
+    return fail('Invio non riuscito. Riprova più tardi.')
   }
 }

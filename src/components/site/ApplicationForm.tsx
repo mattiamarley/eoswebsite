@@ -6,14 +6,15 @@ import { useActionState, useId, useState } from 'react'
 import Link from 'next/link'
 import { applicationSizeError } from '@/src/lib/application-limits'
 import { submitApplication } from '@/src/app/actions/applications'
-export function ApplicationForm({jobId}: {jobId:string}) {
+export function ApplicationForm({jobId}: {jobId:string|null}) {
   const helpId=useId()
   const [fileError,setFileError]=useState('')
   const [state,action,pending]=useActionState(submitApplication,{success:false,message:''})
   if(state.success) return <div className="empty-state" role="status"><h3>Candidatura ricevuta</h3><p>{state.message}</p></div>
   return <form action={action} className="application-form" onSubmit={event=>{const form=new FormData(event.currentTarget);const files=[form.get('cv'),form.get('portfolio')].filter((file):file is File=>file instanceof File);const error=applicationSizeError(files);setFileError(error??'');if(error)event.preventDefault()}}>
     <h3>Invia la tua candidatura</h3>
-    <input type="hidden" name="job_id" value={jobId}/>
+    <input type="hidden" name="job_id" value={jobId??''}/>
+    <input type="hidden" name="application_type" value={jobId?'position':'spontaneous'}/>
     <div className="form-trap" aria-hidden="true"><label>Sito web<input name="website" tabIndex={-1} autoComplete="off"/></label></div>
     <div className="application-name-grid"><label>Nome *<input required name="first_name" autoComplete="given-name" maxLength={80}/></label><label>Cognome *<input required name="last_name" autoComplete="family-name" maxLength={80}/></label></div>
     <label>Email *<input required name="email" type="email" autoComplete="email" maxLength={254}/></label>

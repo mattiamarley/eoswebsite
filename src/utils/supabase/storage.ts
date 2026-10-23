@@ -11,13 +11,14 @@ export const STORAGE_BUCKET = 'website-images'
  */
 export async function uploadImage(
   supabase: SupabaseServerClient,
-  file: File
+  file: File,
+  folder?: 'about'
 ): Promise<string> {
   const extensions: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }
   const ext = file instanceof File ? extensions[file.type] : undefined
   if (!(file instanceof File) || !ext || file.size === 0 || file.size > 5 * 1024 * 1024) throw new Error('Sono consentite immagini JPEG, PNG o WebP fino a 5 MB.')
   if (!matchesImageSignature(new Uint8Array(await file.slice(0,12).arrayBuffer()),file.type)) throw new Error('Il contenuto del file non corrisponde al formato immagine.')
-  const path = `${crypto.randomUUID()}.${ext}`
+  const path = `${folder ? folder + "/" : ""}${crypto.randomUUID()}.${ext}`
 
   const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(path, file, {
     contentType: file.type || undefined,

@@ -35,3 +35,9 @@ Lint, compilazione TypeScript/produzione e test di validazione/documenti eseguit
 `docs/SUPABASE-CANDIDATURE-E-RAL.sql` riunisce le migrazioni candidature e retribuzione in una sola transazione, eseguibile anche dopo la precedente migrazione candidature. In alternativa applicare solo `supabase/migrations/20261023_job_compensation.sql` se quella candidature è già installata.
 
 Backend → Contenuti → Lavoro: livello facoltativo, RAL annua in euro e massimo facoltativo per una fascia. Gli importi sono numeri interi positivi; un unico importo viene presentato come RAL fissa. I dati esistenti non ricevono valori dimostrativi. Le nuove schede blu e i dettagli mostrano gli stessi dati.
+
+## Candidatura spontanea e CTA
+
+La pagina Jobs apre un modulo interno anche per la candidatura spontanea. Stessi dati obbligatori, controlli, CV privati e limiti della candidatura a una posizione. Il backend distingue il tipo `spontaneous`, raggruppa sotto “Candidatura spontanea” e offre un filtro dedicato. Ogni offerta ha la CTA “Candidati a questa posizione”; categoria, sede, livello e RAL sono raccolti sotto il titolo a sinistra.
+
+Applicare `20261023_spontaneous_applications.sql` dopo la migrazione candidature. In alternativa `docs/SUPABASE-AGGIORNAMENTO-COMPLETO.sql` contiene tutte le migrazioni candidature, RAL, spontanee e carosello About ed è riapplicabile. Non è stato eseguito sul progetto remoto in questa sessione.

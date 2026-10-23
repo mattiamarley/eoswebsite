@@ -3,6 +3,12 @@ import Link from 'next/link'
 
 const sections = [
   {
+    href: '/admin/contenuti/about',
+    title: 'Carosello About',
+    description: 'Carica, riordina e modifica le fotografie del carosello About.',
+    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg>,
+  },
+  {
     href: '/admin/contenuti/lavoro',
     title: 'Posizioni di lavoro',
     description: 'Gestisci le offerte di lavoro pubblicate sul sito.',
@@ -62,7 +68,7 @@ export default async function ContenutiPage() {
           <p className="mt-1 text-sm text-muted">Scegli una sezione da gestire.</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {sections.map(({ href, title, description, icon }) => (
             <Link
               key={href}

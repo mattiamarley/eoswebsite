@@ -14,3 +14,10 @@ test('Netlify uploads stay below both per-file and combined limits',()=>{
  assert.ok(applicationSizeError([{size:3*mb},{size:2*mb}]))
  assert.ok(applicationSizeError([{size:4*mb}]))
 })
+test('spontaneous application is explicit and cannot masquerade as a job application',()=>{
+ const f=form();f.set('application_type','spontaneous');f.set('job_id','')
+ const input=applicationInput(f);assert.equal(input.job_id,null);assert.equal(input.application_type,'spontaneous')
+ f.set('job_id',id);assert.equal(applicationInput(f),null)
+ f.set('application_type','position');f.set('job_id','');assert.equal(applicationInput(f),null)
+ f.set('application_type','unexpected');assert.equal(applicationInput(f),null)
+})
