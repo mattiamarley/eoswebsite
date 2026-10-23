@@ -82,9 +82,9 @@ export default async function LavoroPage({ searchParams }: Props) {
       <header className="glass border-b border-white/50 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center gap-2 text-sm">
           <Link href="/admin" className="text-muted hover:text-ink transition">Dashboard</Link>
-          <span className="text-haze">/</span>
+          <span aria-hidden="true" className="text-muted">/</span>
           <Link href="/admin/contenuti" className="text-muted hover:text-ink transition">Contenuti</Link>
-          <span className="text-haze">/</span>
+          <span aria-hidden="true" className="text-muted">/</span>
           <span className="font-semibold text-ink">Lavoro</span>
         </div>
       </header>
