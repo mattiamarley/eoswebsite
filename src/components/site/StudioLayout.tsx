@@ -4,11 +4,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ContentCards } from './ContentCards'
 import { ScrollReveal } from './ScrollReveal'
+import { Breadcrumbs } from './Breadcrumbs'
 import { lorem } from '@/src/lib/site-content'
 
 export function StudioLayout() {
   return <div className="studio-reference">
-    <header className="studio-heading section-wrap"><h1>EOS Studio.</h1><p>La squadra.</p></header>
+    <header className="studio-heading section-wrap"><Breadcrumbs current="Studio"/><h1>EOS Studio.</h1><p>La squadra.</p></header>
     <div className="studio-showcase"><Image src="/images/studio-reference.webp" alt="Un gruppo di professionisti riuniti attorno a un tavolo di lavoro" fill sizes="100vw" priority/></div>
     <section className="studio-statistics" aria-label="Lo studio in numeri">
       <ScrollReveal className="studio-stat"><h2>32<span>+</span></h2><h3>Dipendenti e collaboratori</h3><p className="body-copy">{lorem}</p></ScrollReveal>

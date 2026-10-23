@@ -108,12 +108,15 @@ export default async function ProgettiPage({ searchParams }: Props) {
                   <li
                     key={project.id}
                     className={`glass rounded-card shadow-soft transition hover:shadow-lift ${
-                      editing?.id === project.id ? 'ring-2 ring-lavender' : ''
+                      editing?.id === project.id ? 'ring-2 ring-lavender' : schema.is_featured && project.is_featured ? 'ring-1 ring-lavender/70' : ''
                     }`}
                   >
                     <div className="px-6 py-5 flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-ink">{project.title}</p>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-sm font-bold text-ink">{project.title}</p>
+                          {schema.is_featured && project.is_featured && <span className="inline-flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white"><span aria-hidden="true" className="text-lavender-light">★</span>In evidenza</span>}
+                        </div>
                         <div className="flex flex-wrap gap-1 mt-2">{project.tags?.map(tag=><span key={tag} className="rounded-full bg-lavender/30 px-2 py-1 text-xs text-ink">{tag}</span>)}</div>
                         {project.description && (
                           <p className="mt-1 text-sm text-muted line-clamp-2 leading-relaxed">

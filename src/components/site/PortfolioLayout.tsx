@@ -6,11 +6,12 @@ import { FeaturedProjects } from './FeaturedProjects'
 import type { PublicCard } from './ContentCards'
 import { Cards } from './Cards'
 import { ScrollReveal } from './ScrollReveal'
+import { Breadcrumbs } from './Breadcrumbs'
 import { lorem, projects } from '@/src/lib/site-content'
 
 export function PortfolioLayout({items,sample=false}:{items:PublicCard[];sample?:boolean}) {
   return <div className="portfolio-reference">
-    <header className="portfolio-heading section-wrap"><h1>Portfolio eos</h1><p>Progetti in evidenza</p><a className="pill-button" style={{marginTop:24,fontSize:14}} href="#tutti-i-progetti">Esplora tutti i progetti <span aria-hidden="true">↓</span></a></header>
+    <header className="portfolio-heading section-wrap"><Breadcrumbs current="Portfolio"/><h1>Portfolio eos</h1><p>Progetti in evidenza</p><a className="pill-button" style={{marginTop:24,fontSize:14}} href="#tutti-i-progetti">Esplora tutti i progetti <span aria-hidden="true">↓</span></a></header>
     <FeaturedProjects items={items}/>
     <section className="portfolio-statistics section-wrap" aria-label="EOS in numeri">
       <ScrollReveal className="portfolio-stat"><h2>45<span>+</span></h2><h3>Clienti attivi</h3><p className="body-copy">{lorem}</p></ScrollReveal>
