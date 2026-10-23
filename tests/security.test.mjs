@@ -26,3 +26,14 @@ test('malformed IDs and oversized or binary text fields are rejected',()=>{
   form.set('title','a'.repeat(181));assert.equal(validContentForm(form,{title:180}),false)
   form.set('title',new Blob(['data']),'test');assert.equal(validContentForm(form,{title:180}),false)
 })
+
+import { loginCredentials } from '../src/lib/security.ts'
+test('login rejects binary, oversized and malformed credentials before contacting auth',()=>{
+  const form=new FormData()
+  form.set('email','  admin@example.it  ');form.set('password','a valid password')
+  assert.deepEqual(loginCredentials(form),{email:'admin@example.it',password:'a valid password'})
+  for(const [key,value] of [['email',new Blob(['email'])],['password',new Blob(['secret'])],['email','a'.repeat(255)+'@example.it'],['password','a'.repeat(1025)],['email','bad'],['email','a@b.it\r\nInjected: value'],['password',''],['password','abc\0def']]){
+    const attempt=new FormData();attempt.set('email','admin@example.it');attempt.set('password','valid');attempt.set(key,value)
+    assert.equal(loginCredentials(attempt),null)
+  }
+})

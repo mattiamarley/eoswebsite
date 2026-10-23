@@ -21,3 +21,8 @@ test('spontaneous application is explicit and cannot masquerade as a job applica
  f.set('application_type','position');f.set('job_id','');assert.equal(applicationInput(f),null)
  f.set('application_type','unexpected');assert.equal(applicationInput(f),null)
 })
+
+test('document routes reject UUID-shaped garbage, URL suffixes and encoded traversal',()=>{
+  for(const file of ['-'.repeat(36)+'.pdf','a'.repeat(36)+'.pdf',`${id}.pdf?download=1`,`${id}.pdf#fragment`,`${id}.PDF`,`%2e%2e/${id}.pdf`]) assert.equal(applicationDocumentPath(`${id}/${file}`,id),null)
+  assert.equal(applicationDocumentPath(`${id}/${id}.pdf`,'not-an-id'),null)
+})

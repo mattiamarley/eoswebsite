@@ -52,6 +52,10 @@ drop policy if exists application_documents_write_guard on storage.objects;
 create policy application_documents_write_guard on storage.objects as restrictive for insert to anon,authenticated with check (bucket_id <> 'applications-docs');
 drop policy if exists application_documents_update_guard on storage.objects;
 create policy application_documents_update_guard on storage.objects as restrictive for update to anon,authenticated using (bucket_id <> 'applications-docs') with check (bucket_id <> 'applications-docs');
+-- Constrain legacy permissive DELETE policies without changing other buckets.
+drop policy if exists application_documents_delete_guard on storage.objects;
+create policy application_documents_delete_guard on storage.objects as restrictive for delete to anon,authenticated
+using (bucket_id <> 'applications-docs' or coalesce((select auth.jwt())->'app_metadata'->>'role','') = 'admin');
 -- Throttle public intake without granting public writes to applications or storage.
 create table if not exists public.application_rate_limits (key text primary key, started_at timestamptz not null, attempts integer not null);
 alter table public.application_rate_limits enable row level security;

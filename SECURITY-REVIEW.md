@@ -1,3 +1,5 @@
+> Aggiornamento 23 ottobre 2026: vedere il [controllo di sicurezza corrente](docs/VERIFICA-SICUREZZA-2026-10-23.md). Le verifiche seguenti sono storiche e non descrivono necessariamente lo stato attuale.
+
 > Aggiornamento 21 ottobre 2026: vedere [verifica corrente](docs/VERIFICA-2026-10-21.md). Il testo seguente documenta il controllo precedente.
 
 # Verifica EOS — 3 ottobre 2026

@@ -47,3 +47,11 @@ Applicare `20261023_spontaneous_applications.sql` dopo la migrazione candidature
 Verifica dello schema con richieste `limit=0`, senza leggere dati dei candidati: nel progetto configurato manca `applications.application_type` (42703). Le richieste anonime ai campi presenti restituiscono permesso negato, come previsto per una tabella privata. Il caricamento dell’hub ora ritenta senza il solo campo opzionale mancante, mantenendo filtri e paginazione. Il filtro spontanee resta disabilitato fino alla migrazione; errori di permessi o connessione non attivano la compatibilità.
 
 Per completare l’attivazione eseguire `supabase/migrations/20261023_spontaneous_applications.sql` oppure l’SQL completo aggiornato. Nessuna modifica remota eseguita.
+
+## Ricontrollo sicurezza del 23 ottobre, successivo alla diagnosi
+
+Il nuovo probe anonimo `limit=0` riconosce anche `application_type` e restituisce permesso negato per tutti i campi candidature controllati. La precedente diagnosi del campo mancante è quindi storica. Questo non sostituisce il collaudo dell’hub con una sessione admin. Verifiche, correzioni e punti cloud ancora aperti sono nel [resoconto sicurezza](VERIFICA-SICUREZZA-2026-10-23.md).
+
+## Protezione aggiuntiva dei file CV
+
+Se le migrazioni precedenti sono già state installate, applicare `supabase/migrations/20261023_application_documents_delete_guard.sql`: impedisce cancellazioni dei CV da utenti non amministratori anche con vecchie policy permissive. Nessun record o file viene eliminato. La protezione è inclusa anche negli SQL cumulativi aggiornati; l’aggiornamento del codice su GitHub non esegue automaticamente SQL su Supabase.

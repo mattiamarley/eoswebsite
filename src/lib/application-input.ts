@@ -10,5 +10,8 @@ export function applicationInput(form:FormData) {
   return {first_name:first,last_name:last,applicant_name:`${first} ${last}`,email,phone:phone||null,message:message||null,job_id:type==='spontaneous'?null:job,application_type:type}
 }
 export function applicationDocumentPath(value:string,id:string):string|null {
-  return validRecordId(id)&&new RegExp(`^${id}/[0-9a-f-]{36}\\.pdf$`,'i').test(value)?value:null
+  if(!validRecordId(id) || typeof value!=='string') return null
+  const parts=value.split('/')
+  if(parts.length!==2 || parts[0]!==id || !parts[1].endsWith('.pdf') || !validRecordId(parts[1].slice(0,-4))) return null
+  return value
 }

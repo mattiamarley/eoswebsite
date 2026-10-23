@@ -17,3 +17,11 @@ export function validContentForm(form: FormData, fields: Record<string,number>):
     return value===null || (typeof value==='string' && value.length<=max && !value.includes('\0'))
   })
 }
+
+export function loginCredentials(form: FormData): {email:string;password:string} | null {
+  const email=form.get('email'), password=form.get('password')
+  if(typeof email!=='string' || email.length>254 || typeof password!=='string' || !password.length || password.length>1024 || password.includes('\0')) return null
+  const normalized=email.trim()
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized) || normalized.includes('\0')) return null
+  return {email:normalized,password}
+}

@@ -1,6 +1,8 @@
-import { safeAdminRedirect, isAdmin } from '@/src/lib/security'
+import { safeAdminRedirect, isAdmin, loginCredentials } from '@/src/lib/security'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/src/utils/supabase/server'
+
+export const dynamic = 'force-dynamic'
 
 type Props = {
   searchParams: Promise<{ redirectTo?: string; error?: string }>
@@ -12,19 +14,19 @@ export default async function LoginPage({ searchParams }: Props) {
   async function login(formData: FormData) {
     'use server'
 
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
+    const credentials = loginCredentials(formData)
     const requested = String(formData.get('redirectTo') ?? '')
     const to = safeAdminRedirect(requested)
 
+    const failureParams = new URLSearchParams({ error: 'invalid_credentials' })
+    if (to !== '/admin') failureParams.set('redirectTo', to)
+    if (!credentials) redirect(`/login?${failureParams}`)
 
     const supabase = await createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword(credentials)
 
     if (error) {
-      const params = new URLSearchParams({ error: 'invalid_credentials' })
-      if (to !== '/admin') params.set('redirectTo', to)
-      redirect(`/login?${params}`)
+      redirect(`/login?${failureParams}`)
     }
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -64,6 +66,7 @@ export default async function LoginPage({ searchParams }: Props) {
                 name="email"
                 type="email"
                 required
+                maxLength={254}
                 autoComplete="email"
                 placeholder="nome@azienda.com"
                 className="w-full px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none transition focus:ring-2 focus:ring-gray-900 focus:border-transparent"
@@ -79,6 +82,7 @@ export default async function LoginPage({ searchParams }: Props) {
                 name="password"
                 type="password"
                 required
+                maxLength={1024}
                 autoComplete="current-password"
                 placeholder="••••••••"
                 className="w-full px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-lg outline-none transition focus:ring-2 focus:ring-gray-900 focus:border-transparent"

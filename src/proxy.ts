@@ -1,4 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
+import { isAdmin, safeAdminRedirect } from '@/src/lib/security'
+import { PRIVATE_RESPONSE_HEADERS } from '@/src/lib/http-security'
+import { authCookieOptions } from '@/src/utils/supabase/cookie-options'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
@@ -8,6 +11,7 @@ export async function proxy(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      cookieOptions: authCookieOptions,
       cookies: {
         getAll() {
           return request.cookies.getAll()
@@ -32,15 +36,21 @@ export async function proxy(request: NextRequest) {
 
   // IMPORTANTE: non inserire codice tra createServerClient e getUser().
   // Un errore qui causa logout casuali difficili da diagnosticare.
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  if (!user && request.nextUrl.pathname.startsWith('/admin')) {
+  const path = request.nextUrl.pathname
+  if ((path === '/admin' || path.startsWith('/admin/')) && (error || !isAdmin(user))) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
-    loginUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
-    return NextResponse.redirect(loginUrl)
+    loginUrl.search = ''
+    loginUrl.searchParams.set('redirectTo', safeAdminRedirect(path))
+    if (user && !isAdmin(user)) loginUrl.searchParams.set('error', 'unauthorized')
+    const redirectResponse = NextResponse.redirect(loginUrl)
+    supabaseResponse.cookies.getAll().forEach(cookie => redirectResponse.cookies.set(cookie))
+    supabaseResponse = redirectResponse
   }
 
+  Object.entries(PRIVATE_RESPONSE_HEADERS).forEach(([name, value]) => supabaseResponse.headers.set(name, value))
   return supabaseResponse
 }
 
