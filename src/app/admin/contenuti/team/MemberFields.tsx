@@ -41,11 +41,12 @@ export function MemberFields({ values, dark = false }: { values?: MemberValues; 
 
       <div>
         <label htmlFor="role" className={labelCls}>
-          Ruolo
+          Ruolo <span className="text-red-500">*</span>
         </label>
         <input
           id="role"
           name="role"
+          required
           maxLength={180}
           type="text"
           defaultValue={values?.job_tag ?? ''}
@@ -56,7 +57,7 @@ export function MemberFields({ values, dark = false }: { values?: MemberValues; 
 
       <div>
         <label htmlFor="image" className={labelCls}>
-          Foto
+          Foto <span className="text-muted font-normal">(facoltativa)</span>
         </label>
         {values?.image_url && (
           <div className="mb-2 flex items-center gap-2">
@@ -76,11 +77,12 @@ export function MemberFields({ values, dark = false }: { values?: MemberValues; 
 
       <div>
         <label htmlFor="description" className={labelCls}>
-          Descrizione
+          Descrizione <span className="text-red-500">*</span>
         </label>
         <textarea
           id="description"
           name="description"
+          required
           maxLength={20000}
           rows={4}
           defaultValue={values?.description ?? ''}

@@ -15,7 +15,7 @@ export async function addMember(formData: FormData) {
   const job_tag = (formData.get('role') as string | null)?.trim() || null
   const description = (formData.get('description') as string | null)?.trim() || null
 
-  if (!full_name) redirect('/admin/contenuti/team?error=missing_name')
+  if (!full_name || !job_tag || !description) redirect('/admin/contenuti/team?error=missing_fields')
 
   // redirect() non va dentro try/catch: catturiamo l'errore prima di chiamarlo
   let uploaded: string | null = null
@@ -53,7 +53,7 @@ export async function updateMember(formData: FormData) {
   const job_tag = (formData.get('role') as string | null)?.trim() || null
   const description = (formData.get('description') as string | null)?.trim() || null
 
-  if (!full_name) redirect(`/admin/contenuti/team?edit=${id}&error=missing_name`)
+  if (!full_name || !job_tag || !description) redirect(`/admin/contenuti/team?edit=${id}&error=missing_fields`)
 
   let uploaded: string | null = null
   let updateError: unknown = null

@@ -23,6 +23,7 @@ type Props = {
 const ERROR_MESSAGES: Record<string, string> = {
   invalid_input: 'Dati non validi o troppo lunghi. Controlla i campi e riprova.',
   missing_name: 'Il nome è obbligatorio.',
+  missing_fields: 'Nome, ruolo e descrizione sono obbligatori. La foto è facoltativa.',
   insert_failed: 'Errore durante l\'inserimento. Riprova.',
   update_failed: 'Errore durante la modifica. Riprova.',
   delete_failed: 'Errore durante l\'eliminazione. Riprova.',
