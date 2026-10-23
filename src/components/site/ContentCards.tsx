@@ -12,12 +12,18 @@ export async function ContentCards({kind,limit,portfolioPage=false,featured=fals
     const client = await createClient()
     const table = kind==='team'?'team_members':kind
     let columns:string = kind==='team'?'id,full_name,job_tag,image_url,description':kind==='jobs'?'id,title,category,location,description':'id,title,images,tags,is_featured,description'
-    let query = client.from(table).select(columns).order('created_at',{ascending:false})
+    let query = client.from(table).select(columns).order(kind==='team'?'sort_order':'created_at',{ascending:kind==='team',nullsFirst:false}).order('created_at',{ascending:false}).order('id')
     if(kind==='jobs') query=query.eq('is_open',true)
     if(limit) query=query.limit(limit)
     const response = await query.abortSignal(AbortSignal.timeout(3000))
     let data:unknown[]|null=response.data
     let error=response.error
+    if(kind==='team' && error && ['42703','PGRST204'].includes(error.code) && error.message.includes('sort_order')) {
+      let fallback=client.from(table).select(columns).order('created_at',{ascending:false}).order('id')
+      if(limit) fallback=fallback.limit(limit)
+      const result=await fallback.abortSignal(AbortSignal.timeout(3000))
+      data=result.data; error=result.error
+    }
     // Preserve available metadata while either additive migration is pending.
     for(let attempt=0; kind==='projects' && error?.code==='42703' && attempt<2; attempt++) {
       const missing=['tags','is_featured'].find(column=>error!.message.includes(column) && columns.split(',').includes(column))

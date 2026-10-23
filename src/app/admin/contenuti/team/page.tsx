@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { addMember, updateMember, deleteMember } from './actions'
 import { SearchBox } from '../../_components/SearchBox'
 import { Modal } from '../../_components/Modal'
+import { TeamOrder } from './TeamOrder'
 import { MemberFields } from './MemberFields'
 
 type Member = {
@@ -44,6 +45,9 @@ export default async function TeamPage({ searchParams }: Props) {
   }
   const { data: members } = await query.order('created_at', { ascending: false })
 
+  const orderedResponse = await supabase.from('team_members').select('id,full_name,job_tag,image_url').order('sort_order',{ascending:true,nullsFirst:false}).order('created_at',{ascending:false}).order('id')
+  const orderMissing = ['42703','PGRST204'].includes(orderedResponse.error?.code ?? '') && (orderedResponse.error?.message ?? '').includes('sort_order')
+  const preview = orderMissing ? await supabase.from('team_members').select('id,full_name,job_tag,image_url').order('created_at',{ascending:false}).order('id') : orderedResponse
   const editing = editId ? members?.find((m) => m.id === editId) ?? null : null
 
   return (
@@ -65,6 +69,7 @@ export default async function TeamPage({ searchParams }: Props) {
           </div>
         )}
 
+        <TeamOrder key={JSON.stringify(preview.data)} members={preview.data ?? []} enabled={!preview.error && !orderMissing} error={preview.error ? 'Impossibile caricare l’anteprima del team.' : orderMissing ? 'Per salvare l’ordine occorre applicare la migrazione 20261023_team_order.sql su Supabase.' : undefined}/>
         <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 items-start">
 
           <div className="glass rounded-card shadow-soft p-6 lg:sticky lg:top-6">

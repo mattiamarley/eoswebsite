@@ -701,3 +701,21 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 .team-profile-pagination:empty { display:none; }
 @media(max-width:600px) { .team-profile-copy-box { max-height:clamp(70px,calc(85dvh - 300px),260px); } }
 @media(max-height:500px) and (min-width:601px) { .team-profile-copy-box { max-height:65px; } }
+
+/* Admin: the same photo-led team cards, with accessible ordering controls. */
+.team-order-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;list-style:none;padding:0;margin:0}
+.team-order-preview{position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:28px;background:#f7f7fa;border:1px solid #e6e5ef;box-shadow:0 12px 24px #17275118;cursor:grab;isolation:isolate}
+.team-order-preview:active{cursor:grabbing}
+.team-order-preview img{object-fit:cover;border-radius:inherit}
+.team-order-preview:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#ffffffed 0%,#ffffff75 32%,transparent 65%);pointer-events:none}
+.team-order-label{position:relative;z-index:1;padding:22px;color:#1b2b62;display:flex;flex-direction:column;gap:4px;overflow-wrap:anywhere}
+.team-order-label strong{font-size:17px;line-height:1.2}
+.team-order-label span{font-size:14px;color:#626c8e}
+.team-order-position{position:absolute;bottom:16px;right:16px;z-index:1;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#d6ccecbb;backdrop-filter:blur(14px);border:1px solid white;color:#1b2b62;font-size:12px;box-shadow:inset 0 1px 5px white,0 5px 14px #17275122}
+.team-order-tools{display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:8px}
+.team-order-tools button{width:44px;height:44px;border:1px solid #c9c4dc;border-radius:50%;background:#ffffffaa;color:#1b2b62;font-size:20px}
+.team-order-save{padding:12px 24px;border-radius:999px;border:1px solid #aa9acb;background:linear-gradient(120deg,#e8e3f3cc,#baadd6cc);box-shadow:inset 0 2px 5px #fff,0 8px 18px #17275112;color:#1b2b62;font-size:14px;font-weight:600}
+.team-order-tools button:disabled,.team-order-save:disabled{opacity:.4;cursor:default}
+.team-order-tools button:focus-visible,.team-order-save:focus-visible{outline:3px solid #8875b8;outline-offset:3px}
+@media(max-width:800px){.team-order-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}
+@media(max-width:420px){.team-order-label{padding:14px}.team-order-label strong{font-size:14px}.team-order-label span{font-size:12px}.team-order-preview{border-radius:22px}}

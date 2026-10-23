@@ -127,3 +127,16 @@ export async function deleteMember(formData: FormData) {
   revalidatePath('/admin/contenuti/team')
   revalidatePath('/studio')
 }
+
+export async function reorderTeam(ids: string[]) {
+  const { supabase } = await requireAdmin()
+  if (!Array.isArray(ids) || ids.length > 2000 || ids.some(id => !validRecordId(id)) || new Set(ids).size !== ids.length) {
+    return {error: 'Ordine non valido.'}
+  }
+  const { error } = await supabase.rpc('reorder_team', {member_ids: ids})
+  if (error) return {error: 'Impossibile salvare. Verifica la migrazione dell’ordine team oppure ricarica la pagina: il team potrebbe essere cambiato.'}
+  revalidatePath('/admin/contenuti/team')
+  revalidatePath('/studio')
+  revalidatePath('/')
+  return {success: true}
+}
