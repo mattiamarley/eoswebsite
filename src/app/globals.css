@@ -851,3 +851,9 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 
 /* Allow page scrolling alongside swipe navigation. */
 .about-photo-showcase{touch-action:pan-y pinch-zoom}
+
+/* Compact glass navigation back to the public website. */
+.admin-site-link{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 16px;border:1px solid #ffffffbd;border-radius:999px;color:var(--color-ink);background:linear-gradient(135deg,#fffffff0,#d9d2edc9);box-shadow:inset 0 1px 3px #fff,0 3px 12px #18295610;font-size:12px;font-weight:600;line-height:1.3;white-space:nowrap;transition:box-shadow .2s,background .2s}
+.admin-site-link:hover{background:linear-gradient(135deg,#fff,#c9bfe4de);box-shadow:inset 0 1px 3px #fff,0 5px 16px #1829561a}
+.admin-site-link:focus-visible{outline:3px solid #8875b8;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.admin-site-link{transition:none}}

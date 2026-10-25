@@ -1,3 +1,4 @@
+import { AdminSiteLink } from '@/src/app/admin/_components/AdminSiteLink'
 import { formatSalary } from '@/src/lib/job-compensation'
 import { hasJobCompensation } from '@/src/utils/supabase/job-schema'
 import { requireAdmin } from '@/src/utils/supabase/admin'
@@ -80,12 +81,13 @@ export default async function LavoroPage({ searchParams }: Props) {
   return (
     <div className="min-h-screen">
       <header className="glass border-b border-white/50 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center gap-2 text-sm">
+        <div className="max-w-6xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center gap-2 text-sm">
           <Link href="/admin" className="text-muted hover:text-ink transition">Dashboard</Link>
           <span aria-hidden="true" className="text-muted">/</span>
           <Link href="/admin/contenuti" className="text-muted hover:text-ink transition">Contenuti</Link>
           <span aria-hidden="true" className="text-muted">/</span>
           <span className="font-semibold text-ink">Lavoro</span>
+          <AdminSiteLink/>
         </div>
       </header>
 
