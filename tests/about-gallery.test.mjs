@@ -25,3 +25,15 @@ test('limits uploads per image and per Netlify request',()=>{
  assert.ok(galleryUploadError([{size:4*1024*1024}]))
  assert.ok(galleryUploadError([{size:3*1024*1024},{size:2*1024*1024}]))
 })
+
+test('Studio and About cannot retain or delete each other’s images',()=>{
+ const studioSrc=src.replace('/about/','/studio/')
+ const studio={...slide,src:studioSrc}
+ assert.equal(validGalleryImage(studioSrc,origin,'studio'),true)
+ assert.equal(validGalleryImage(src,origin,'studio'),false)
+ assert.equal(validGalleryImage(studioSrc,origin,'about'),false)
+ assert.equal(retainedGallerySlide(studio,[studio],origin,'studio'),true)
+ assert.equal(retainedGallerySlide(slide,[slide],origin,'studio'),false)
+ assert.equal(retainedGallerySlide(studio,[studio],origin,'about'),false)
+ assert.equal(validGalleryImage(studioSrc.replace(id,'-'.repeat(36)),origin,'studio'),false)
+})

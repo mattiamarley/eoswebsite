@@ -848,3 +848,6 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 @media(max-width:760px){.jobs .content-card{padding-bottom:110px}.jobs .job-apply{left:22px;right:22px;bottom:22px;font-size:13px;padding:12px 14px;gap:10px}.spontaneous-application{display:block}.spontaneous-application .pill-button{margin-top:25px;white-space:normal;text-align:center}}
 .jobs .job-overview .job-tags{margin-top:18px;gap:9px;max-width:100%}
 .jobs .job-overview .job-tags>span{min-width:105px;overflow-wrap:anywhere;text-align:center}
+
+/* Allow page scrolling alongside swipe navigation. */
+.about-photo-showcase{touch-action:pan-y pinch-zoom}

@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowIcon } from './ArrowIcon'
-import { useEffect, useRef, useState } from 'react'
-import { useReducedMotion } from 'framer-motion'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCarouselPlayback } from './useCarouselPlayback'
 import type { PublicCard } from './ContentCards'
 import { GlassDialog } from './GlassDialog'
 import { ProjectCarousel } from './ProjectCarousel'
@@ -21,20 +21,14 @@ export function FeaturedProjects({items,previewOnly=false}:{items:PublicCard[];p
   const mock=featured.length===0
   const slides=mock?(items.length?items.slice(0,6):process.env.NODE_ENV==='development'?samples:[]):featured
   const [active,setActive]=useState(0)
-  const [hover,setHover]=useState(false)
-  const [focused,setFocused]=useState(false)
   const [selected,setSelected]=useState<string|null>(null)
   const detail=slides.find(item=>item.id===selected)
-  const [interacted,setInteracted]=useState(false)
   const touchStart=useRef<{x:number;y:number}|null>(null)
   const trigger=useRef<HTMLButtonElement|null>(null)
-  const reduced=useReducedMotion()
   const current=slides.length?active%slides.length:0
-  useEffect(()=>{
-    if(hover||focused||detail||reduced||interacted||slides.length<2)return
-    const timer=setInterval(()=>{if(!document.hidden)setActive(value=>(value+1)%slides.length)},5500)
-    return ()=>clearInterval(timer)
-  },[hover,focused,detail,reduced,interacted,slides.length])
+  const count=slides.length
+  const advance=useCallback(()=>setActive(value=>(value+1)%count),[count,setActive])
+  const {regionRef,restart,events}=useCarouselPlayback(slides.length,advance,!!detail)
   useEffect(()=>{
     const sync=()=>setSelected(new URLSearchParams(window.location.hash.slice(1)).get('evidenza'))
     sync();window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync)
@@ -42,11 +36,11 @@ export function FeaturedProjects({items,previewOnly=false}:{items:PublicCard[];p
   },[])
   function open(item:PublicCard){window.history.pushState({...window.history.state,eosFeatured:true},'',`#evidenza=${encodeURIComponent(item.id)}`);setSelected(item.id)}
   function close(){if(window.history.state?.eosFeatured)window.history.back();else{window.history.replaceState(window.history.state,'',window.location.pathname+window.location.search);setSelected(null)}}
-  function move(delta:number){setInteracted(true);setActive((current+delta+slides.length)%slides.length)}
+  function move(delta:number){restart();setActive((current+delta+slides.length)%slides.length)}
   const isDemo=mock && items.length===0 && process.env.NODE_ENV==='development'
   if(!slides.length)return null
-  return <section className="featured-projects" aria-roledescription="carosello" aria-label={isDemo?'Anteprima del carosello progetti':'Progetti selezionati'} onKeyDown={e=>{if(detail)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();move(e.key==='ArrowLeft'?-1:1)}}} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false)}}>
-    <div className="featured-stage" onTouchStart={e=>{const point=e.touches[0];touchStart.current={x:point.clientX,y:point.clientY};setInteracted(true)}} onTouchCancel={()=>{touchStart.current=null}} onTouchEnd={e=>{const start=touchStart.current;touchStart.current=null;if(!start||slides.length<2)return;const point=e.changedTouches[0];const dx=point.clientX-start.x;const dy=point.clientY-start.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4)move(dx<0?1:-1)}}>
+  return <section className="featured-projects" aria-roledescription="carosello" aria-label={isDemo?'Anteprima del carosello progetti':'Progetti selezionati'} onKeyDown={e=>{if(detail)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();move(e.key==='ArrowLeft'?-1:1)}}} ref={regionRef} {...events}>
+    <div className="featured-stage" onTouchStart={e=>{const point=e.touches[0];touchStart.current={x:point.clientX,y:point.clientY};restart()}} onTouchCancel={()=>{touchStart.current=null}} onTouchEnd={e=>{const start=touchStart.current;touchStart.current=null;if(!start||slides.length<2)return;const point=e.changedTouches[0];const dx=point.clientX-start.x;const dy=point.clientY-start.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4)move(dx<0?1:-1)}}>
       {slides.map((item,index)=>{const offset=(index-current+slides.length)%slides.length;const position=offset===0?'current':offset===1?'next':offset===slides.length-1?'previous':'hidden';return <article key={item.id} className={`featured-slide is-${position}`} aria-hidden={index!==current} inert={index!==current}>
         {item.images?.[0]&&<Image src={item.images[0]} alt={item.title} fill sizes="(max-width:640px) 90vw, 80vw" priority={index===0}/>}
         <div className="featured-shade"/>
@@ -56,11 +50,6 @@ export function FeaturedProjects({items,previewOnly=false}:{items:PublicCard[];p
         </div>
       </article>})}
     </div>
-    {slides.length>1&&<div className="featured-controls">
-      <button className="featured-minimal-arrow" onClick={()=>move(-1)} aria-label="Progetto precedente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="M20 12H4m7-7-7 7 7 7"/></svg></button>
-      <div className="featured-pagination">{slides.map((item,index)=><button key={item.id} aria-label={`Mostra ${item.title}`} aria-pressed={current===index} onClick={()=>{setInteracted(true);setActive(index)}}><span/></button>)}</div>
-      <button className="featured-minimal-arrow" onClick={()=>move(1)} aria-label="Progetto successivo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg></button>
-    </div>}
     {previewOnly&&<div className="featured-projects-cta"><Link className="pill-button" href="/portfolio#tutti-i-progetti">Tutti i progetti <ArrowIcon/></Link></div>}
     {!previewOnly&&detail&&<GlassDialog title={detail.title} onClose={close} returnFocus={trigger}>{isDemo&&<p className="body-copy">Anteprima grafica con fotografia stock. Non rappresenta un progetto realizzato da EOS.</p>}{Boolean(detail.images?.length)&&<ProjectCarousel images={detail.images!} title={detail.title}/>}<p className="body-copy" style={{whiteSpace:'pre-line'}}>{detail.description||lorem}</p></GlassDialog>}
   </section>

@@ -3,10 +3,11 @@ import Image from 'next/image'
 import { useEffect,useRef,useState,useTransition } from 'react'
 import { compressImage } from '../../_components/compressImage'
 import { PhotoShowcase } from '@/src/components/site/PhotoShowcase'
-import { ABOUT_GALLERY_MAX,galleryUploadError,type AboutGallery,type GallerySlide } from '@/src/lib/about-gallery'
+import { ABOUT_GALLERY_MAX,galleryUploadError,type GalleryKey,type AboutGallery,type GallerySlide } from '@/src/lib/about-gallery'
 import { saveAboutGallery } from './actions'
 type Draft=GallerySlide&{file?:File}
-export function AboutGalleryEditor({initial}:{initial:AboutGallery}){
+export function AboutGalleryEditor({initial,galleryKey='about'}:{initial:AboutGallery;galleryKey?:GalleryKey}){
+  const label=galleryKey==='studio'?'Studio':'About'
   const [saved,setSaved]=useState(initial)
   const [items,setItems]=useState<Draft[]>(initial.slides??[])
   const [busy,setBusy]=useState(false),[pending,startTransition]=useTransition()
@@ -31,7 +32,7 @@ export function AboutGalleryEditor({initial}:{initial:AboutGallery}){
       setItems(current=>[...current,...added]);setMessage('Foto aggiunte alla bozza. Compila i testi alternativi e salva per pubblicarle.')
     }catch{error('Impossibile preparare le foto. Prova con un altro file.')}finally{setBusy(false)}
   }
-  function move(id:string,to:number){if(locked||to<0||to>=items.length)return;setItems(current=>{const next=[...current],from=next.findIndex(item=>item.id===id);if(from<0)return current;const [item]=next.splice(from,1);next.splice(to,0,item);return next});setMessage('Ordine modificato. Salva per aggiornare About.');setFailed(false)}
+  function move(id:string,to:number){if(locked||to<0||to>=items.length)return;setItems(current=>{const next=[...current],from=next.findIndex(item=>item.id===id);if(from<0)return current;const [item]=next.splice(from,1);next.splice(to,0,item);return next});setMessage(`Ordine modificato. Salva per aggiornare ${label}.`);setFailed(false)}
   function remove(id:string){setItems(current=>{const item=current.find(item=>item.id===id);if(item?.file){URL.revokeObjectURL(item.src);blobs.current.delete(item.src)}return current.filter(item=>item.id!==id)});setMessage('Foto rimossa dalla bozza. Salva per confermare.');setFailed(false)}
   function reset(){blobs.current.forEach(url=>URL.revokeObjectURL(url));blobs.current.clear();setItems(saved.slides??[]);setMessage('Modifiche annullate.');setFailed(false)}
   function save(event:React.FormEvent<HTMLFormElement>){
@@ -43,19 +44,19 @@ export function AboutGalleryEditor({initial}:{initial:AboutGallery}){
     items.forEach(item=>{if(item.file)form.set(`image:${item.id}`,item.file)})
     setMessage('');setFailed(false)
     startTransition(async()=>{
-      try{const result=await saveAboutGallery(form);setMessage(result.message);setFailed(!result.success)
+      try{const result=await saveAboutGallery(form,galleryKey);setMessage(result.message);setFailed(!result.success)
         if(result.success&&result.gallery){setSaved(result.gallery);setItems(result.gallery.slides??[]);blobs.current.forEach(url=>URL.revokeObjectURL(url));blobs.current.clear()}
       }catch{error('Salvataggio non riuscito. La bozza è ancora disponibile: riprova.')}
     })
   }
   return <form onSubmit={save} className="glass rounded-card shadow-soft p-6" aria-busy={locked}>
     <p className="text-sm text-muted mb-5">Fino a 8 foto. Trascinale oppure usa le frecce per riordinarle. Le modifiche diventano pubbliche solo premendo “Salva carosello”.</p>
-    {saved.slides===null&&<p className="rounded-xl bg-lavender-light p-4 text-sm text-ink mb-5">Non hai ancora una selezione dedicata: About usa le foto dei progetti. Il primo salvataggio sostituirà questa selezione automatica.</p>}
+    {saved.slides===null&&<p className="rounded-xl bg-lavender-light p-4 text-sm text-ink mb-5">Non hai ancora una selezione dedicata: {label} usa {galleryKey==='studio'?'la foto iniziale dello studio':'le foto dei progetti'}. Il primo salvataggio sostituirà questa selezione automatica.</p>}
     <fieldset disabled={locked}>
       <div className="flex flex-wrap items-center gap-3 mb-6"><label className={`team-order-save cursor-pointer ${items.length>=ABOUT_GALLERY_MAX?'opacity-40':''}`}><span>Aggiungi foto</span><input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={pick} disabled={locked||items.length>=ABOUT_GALLERY_MAX} className="sr-only" aria-label="Aggiungi foto al carosello"/></label><span className="text-sm text-muted">{items.length} / {ABOUT_GALLERY_MAX}</span><button type="button" className="rounded-full border px-4 py-2 text-sm" disabled={!items.length} onClick={()=>setPreview(value=>!value)}>{preview?'Nascondi anteprima':'Anteprima carosello'}</button></div>
       <p className="text-xs text-muted mb-6">JPEG, PNG o WebP. Ottimizzazione automatica; massimo 3 MB per foto e 4 MB complessivi di nuovi file per salvataggio.</p>
       {preview&&items.length>0&&<div className="about-gallery-preview mb-6"><PhotoShowcase key={items.map(item=>item.id).join(',')} images={items.map(item=>({src:item.src,alt:item.alt||'Anteprima foto'}))}/></div>}
-      {!items.length&&<div className="rounded-2xl border border-dashed border-lavender p-8 text-center text-sm text-muted mb-5">Aggiungi le foto che vuoi mostrare. Salvando senza foto, nasconderai il carosello About.</div>}
+      {!items.length&&<div className="rounded-2xl border border-dashed border-lavender p-8 text-center text-sm text-muted mb-5">Aggiungi le foto che vuoi mostrare. Salvando senza foto, nasconderai il carosello {label}.</div>}
       <ol className="about-gallery-editor-grid">{items.map((item,index)=><li key={item.id} draggable={!locked} onDragStart={event=>{if((event.target as HTMLElement).closest('input,button')){event.preventDefault();return}dragged.current=item.id;event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',item.id)}} onDragEnd={()=>{dragged.current=null}} onDragOver={event=>{if(!locked)event.preventDefault()}} onDrop={event=>{event.preventDefault();if(dragged.current)move(dragged.current,index);dragged.current=null}} className="rounded-2xl border border-white/70 bg-white/40 overflow-hidden">
         <div className="about-gallery-thumbnail"><Image src={item.src} alt={item.alt||`Anteprima foto ${index+1}`} fill unoptimized sizes="(max-width:640px) 90vw, 33vw" draggable={false}/><span>{String(index+1).padStart(2,'0')}{item.file?' · Nuova':''}</span></div>
         <div className="p-4"><label htmlFor={`alt-${item.id}`} className="text-xs font-semibold text-ink">Testo alternativo *</label><input id={`alt-${item.id}`} className="w-full rounded-lg border border-haze bg-white/70 p-2 mt-2 text-sm" required maxLength={160} value={item.alt} onChange={event=>setItems(current=>current.map(photo=>photo.id===item.id?{...photo,alt:event.target.value}:photo))} placeholder="Descrivi brevemente la foto"/>

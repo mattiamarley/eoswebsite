@@ -1,5 +1,6 @@
 import { validRecordId } from './security.ts'
 import { publicImagePath } from './image-security.ts'
+export type GalleryKey='about'|'studio'
 export const ABOUT_GALLERY_MAX=8
 export type GallerySlide={id:string;src:string;alt:string}
 export type AboutGallery={slides:GallerySlide[]|null;revision:number}
@@ -14,12 +15,14 @@ export function galleryDraft(value:unknown):GallerySlide[]|null {
   }
   return result
 }
-export function validGalleryImage(src:string,origin:string|undefined):boolean {
+export function validGalleryImage(src:string,origin:string|undefined,galleryKey:GalleryKey='about'):boolean {
   const path=publicImagePath(src,origin)
-  return path!==null&&/^about\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(path)
+  if(!path)return false
+  const [folder,file,...extra]=path.split('/')
+  return folder===galleryKey&&extra.length===0&&!!file&&/\.(jpg|png|webp)$/.test(file)&&validRecordId(file.replace(/\.(jpg|png|webp)$/,''))
 }
-export function retainedGallerySlide(slide:GallerySlide,current:GallerySlide[],origin:string|undefined):boolean {
-  return validGalleryImage(slide.src,origin)&&current.some(item=>item.id===slide.id&&item.src===slide.src)
+export function retainedGallerySlide(slide:GallerySlide,current:GallerySlide[],origin:string|undefined,galleryKey:GalleryKey='about'):boolean {
+  return validGalleryImage(slide.src,origin,galleryKey)&&current.some(item=>item.id===slide.id&&item.src===slide.src)
 }
 export function galleryUploadError(files:{size:number}[]):string|null {
   if(files.some(file=>file.size>3*1024*1024))return 'Ogni nuova foto può pesare al massimo 3 MB dopo l’ottimizzazione.'

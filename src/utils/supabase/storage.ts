@@ -12,7 +12,7 @@ export const STORAGE_BUCKET = 'website-images'
 export async function uploadImage(
   supabase: SupabaseServerClient,
   file: File,
-  folder?: 'about'
+  folder?: 'about' | 'studio'
 ): Promise<string> {
   const extensions: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }
   const ext = file instanceof File ? extensions[file.type] : undefined

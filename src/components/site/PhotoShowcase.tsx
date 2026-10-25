@@ -1,14 +1,16 @@
 'use client'
 import Image from 'next/image'
-import { useEffect,useState } from 'react'
-import { useReducedMotion } from 'framer-motion'
-export function PhotoShowcase({images}:{images:{src:string;alt:string}[]}){
- const [active,setActive]=useState(0),[paused,setPaused]=useState(false),[interacted,setInteracted]=useState(false)
- const reduced=useReducedMotion()
- useEffect(()=>{if(reduced||paused||interacted||images.length<2)return;const timer=setInterval(()=>{if(!document.hidden)setActive(value=>(value+1)%images.length)},5000);return()=>clearInterval(timer)},[reduced,paused,interacted,images.length])
- const move=(index:number)=>{setInteracted(true);setActive((index+images.length)%images.length)}
- return <section className="about-photo-showcase" aria-label="Immagini dei progetti" aria-roledescription="carosello" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)} onFocusCapture={()=>setPaused(true)} onBlurCapture={event=>{if(!event.currentTarget.contains(event.relatedTarget))setPaused(false)}} onKeyDown={event=>{if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();move(active+(event.key==='ArrowLeft'?-1:1))}}}>
+import { useCallback,useRef,useState } from 'react'
+import { useCarouselPlayback } from './useCarouselPlayback'
+export function PhotoShowcase({images,label="Immagini dei progetti"}:{images:{src:string;alt:string}[];label?:string}){
+ const [active,setActive]=useState(0)
+ const touchStart=useRef<{x:number;y:number}|null>(null)
+ const count=images.length
+ const advance=useCallback(()=>setActive(value=>(value+1)%count),[count,setActive])
+ const {regionRef,restart,events}=useCarouselPlayback(images.length,advance)
+ const move=(index:number)=>{restart();setActive((index+images.length)%images.length)}
+ return <section ref={regionRef} {...events} className="about-photo-showcase" aria-label={label} tabIndex={count>1?0:undefined} aria-roledescription="carosello" onKeyDown={event=>{if(images.length>1&&(event.key==='ArrowLeft'||event.key==='ArrowRight')){event.preventDefault();move(active+(event.key==='ArrowLeft'?-1:1))}}}
+ onTouchStart={event=>{const point=event.touches[0];touchStart.current={x:point.clientX,y:point.clientY}}} onTouchCancel={()=>{touchStart.current=null}} onTouchEnd={event=>{const start=touchStart.current;touchStart.current=null;if(!start||images.length<2)return;const point=event.changedTouches[0];const dx=point.clientX-start.x,dy=point.clientY-start.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4)move(active+(dx<0?1:-1))}}>
  {images.map((image,index)=><div key={`${image.src}-${index}`} className="about-photo-slide" data-active={index===active} aria-hidden={index!==active}><Image src={image.src} alt={image.alt} fill sizes="100vw" unoptimized={image.src.startsWith('blob:')}/></div>)}
- {images.length>1&&<div className="about-photo-controls"><button aria-label="Immagine precedente" onClick={()=>move(active-1)}>←</button>{images.map((image,index)=><button key={index} className="about-photo-dot" aria-label={`Mostra immagine ${index+1}: ${image.alt}`} aria-pressed={index===active} onClick={()=>move(index)}/>)}<button aria-label="Immagine successiva" onClick={()=>move(active+1)}>→</button><button aria-label={paused||interacted?'Riprendi carosello':'Metti in pausa il carosello'} onClick={()=>{if(paused||interacted){setPaused(false);setInteracted(false)}else setInteracted(true)}}>{paused||interacted?'▷':'Ⅱ'}</button></div>}
  </section>
 }
