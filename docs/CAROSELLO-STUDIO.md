@@ -16,6 +16,6 @@ La barra usa lo stesso timer di avanzamento: dura 5 secondi, riparte al cambio m
 
 Ogni foto può avere un titolo (massimo 120 caratteri) e una descrizione (massimo 600), modificabili in Modifica caroselli e visibili nell’anteprima. Sono facoltativi: per le foto precedenti il titolo usa il testo alternativo, mentre la descrizione resta vuota se non compilata. Per le immagini automatiche dei progetti vengono usati titolo e descrizione del progetto.
 
-La sfumatura tenue e graduale, con un accenno lilla e fondo blu, riserva la parte bassa della foto ai testi, allineati a sinistra; il titolo grande è bianco pieno, senza sfumature sulle lettere, e la descrizione bianca mantiene contrasto. La barra di avanzamento si trova in alto al centro. Per una didascalia efficace usare testi brevi: il layout mostra fino a due righe di titolo e quattro di descrizione.
+Titolo e descrizione sono raccolti in un banner glass compatto, sovrapposto nella parte bassa della foto: fondo chiaro traslucido, sfocatura e riflessi ai bordi, angoli stondati, testi blu allineati a sinistra e titolo più contenuto. La sfumatura lilla/blu resta dietro al banner. La barra di avanzamento si trova in alto al centro. Per una didascalia efficace usare testi brevi: il layout mostra fino a due righe di titolo e quattro di descrizione.
 
 Non serve una nuova migrazione SQL: i campi sono conservati nel JSON slides della tabella site_galleries già esistente. Restano validi i permessi e l’isolamento delle gallerie; nessuna foto o didascalia remota è stata modificata durante l’implementazione.
