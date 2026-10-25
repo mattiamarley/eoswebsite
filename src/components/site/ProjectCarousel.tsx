@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { ArrowIcon } from './ArrowIcon'
 import { useCallback, useRef, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { useCarouselPlayback } from './useCarouselPlayback'
@@ -35,5 +36,10 @@ export function ProjectCarousel({ images, title }: { images: string[]; title: st
         <Image src={url} alt={`${title} — fotografia ${index + 1}`} width={1200} height={800} sizes="(max-width:760px) 90vw, 700px" className="project-carousel-photo" draggable={false}/>
       </div>)}
     </div>
+    {multiple && <div className="project-carousel-controls">
+      <button type="button" className="round-button glass" aria-label="Foto precedente" disabled={active === 0} onClick={() => select(active - 1)}><ArrowIcon direction="left"/></button>
+      <span className="project-carousel-count" aria-live="off" aria-atomic="true">{String(active + 1).padStart(2, '0')} <span>/ {String(images.length).padStart(2, '0')}</span></span>
+      <button type="button" className="round-button glass" aria-label="Foto successiva" disabled={active === images.length - 1} onClick={() => select(active + 1)}><span className="project-carousel-next"><ArrowIcon direction="left"/></span></button>
+    </div>}
   </section>
 }

@@ -48,6 +48,6 @@ export async function saveAboutGallery(form:FormData,galleryKey:GalleryKey='abou
   const removed=previous.filter(slide=>!resolved.some(item=>item.src===slide.src)&&validGalleryImage(slide.src,process.env.NEXT_PUBLIC_SUPABASE_URL,galleryKey)).map(slide=>slide.src)
   // Only delete gallery-owned objects, never images belonging to portfolio or team.
   if(removed.length)await deleteImages(supabase,removed).catch(()=>console.error('[aboutGallery] removed-image cleanup failed'))
-  revalidatePath(`/${galleryKey}`);revalidatePath(`/admin/contenuti/${galleryKey}`)
+  revalidatePath('/admin/contenuti/caroselli');revalidatePath(`/${galleryKey}`);revalidatePath(`/admin/contenuti/${galleryKey}`)
   return {success:true,message:resolved.length?`Carosello salvato. La pagina ${label} è aggiornata.`:'Carosello nascosto dalla pagina About.',gallery:{slides:resolved,revision:revision+1}}
 }

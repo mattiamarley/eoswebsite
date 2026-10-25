@@ -50,6 +50,11 @@ export function FeaturedProjects({items,previewOnly=false}:{items:PublicCard[];p
         </div>
       </article>})}
     </div>
+    {slides.length>1&&<div className="featured-controls">
+      <button className="featured-minimal-arrow" onClick={()=>move(-1)} aria-label="Progetto precedente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="M20 12H4m7-7-7 7 7 7"/></svg></button>
+      <div className="featured-pagination">{slides.map((item,index)=><button key={item.id} aria-label={`Mostra ${item.title}`} aria-pressed={current===index} onClick={()=>{restart();setActive(index)}}><span/></button>)}</div>
+      <button className="featured-minimal-arrow" onClick={()=>move(1)} aria-label="Progetto successivo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg></button>
+    </div>}
     {previewOnly&&<div className="featured-projects-cta"><Link className="pill-button" href="/portfolio#tutti-i-progetti">Tutti i progetti <ArrowIcon/></Link></div>}
     {!previewOnly&&detail&&<GlassDialog title={detail.title} onClose={close} returnFocus={trigger}>{isDemo&&<p className="body-copy">Anteprima grafica con fotografia stock. Non rappresenta un progetto realizzato da EOS.</p>}{Boolean(detail.images?.length)&&<ProjectCarousel images={detail.images!} title={detail.title}/>}<p className="body-copy" style={{whiteSpace:'pre-line'}}>{detail.description||lorem}</p></GlassDialog>}
   </section>

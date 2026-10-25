@@ -3,16 +3,10 @@ import Link from 'next/link'
 
 const sections = [
   {
-    href: '/admin/contenuti/studio',
-    title: 'Carosello Studio',
-    description: 'Carica, riordina e modifica le fotografie della pagina Studio.',
+    href: '/admin/contenuti/caroselli',
+    title: 'Modifica caroselli',
+    description: 'Gestisci le foto e l’ordine dei caroselli About e Studio.',
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg>,
-  },
-  {
-    href: '/admin/contenuti/about',
-    title: 'Carosello About',
-    description: 'Carica, riordina e modifica le fotografie del carosello About.',
-    icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg>,
   },
   {
     href: '/admin/contenuti/lavoro',

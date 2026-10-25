@@ -1,2 +1,2 @@
-import { GalleryAdminPage } from '../about/GalleryAdminPage'
-export default function StudioGalleryPage(){return <GalleryAdminPage galleryKey="studio"/>}
+import { redirect } from 'next/navigation'
+export default function GalleryRedirect(){redirect('/admin/contenuti/caroselli#studio')}
