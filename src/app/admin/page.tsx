@@ -1,4 +1,3 @@
-import { AdminBackLink } from '@/src/app/admin/_components/AdminBackLink'
 import { AdminSiteLink } from '@/src/app/admin/_components/AdminSiteLink'
 import { requireAdmin } from '@/src/utils/supabase/admin'
 import { redirect } from 'next/navigation'
@@ -25,7 +24,7 @@ export default async function AdminPage() {
     <div className="min-h-screen">
       <header className="glass border-b border-white/50 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-6 min-h-16 py-3 flex flex-wrap gap-3 items-center justify-between">
-          <div className="flex items-center gap-2"><AdminBackLink href="/"/><span className="text-lg font-bold tracking-tight text-ink">Eos Dashboard</span></div>
+          <span className="text-lg font-bold tracking-tight text-ink">Eos Dashboard</span>
           <div className="flex items-center gap-2 sm:gap-4">
             <AdminSiteLink/>
             <span className="text-sm text-muted hidden sm:block">{user.email}</span>
