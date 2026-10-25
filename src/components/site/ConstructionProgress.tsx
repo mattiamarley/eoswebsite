@@ -15,8 +15,8 @@ function Step({progress,index}:{progress:MotionValue<number>;index:number}) {
   const opacity=useTransform(progress,p=>p>=step.start?1:.35)
   return <div style={{flex:1,minWidth:0}}>
     <motion.span style={{opacity,fontSize:9,letterSpacing:'.12em',display:'block',marginBottom:8,fontVariantNumeric:'tabular-nums'}}>0{index+1}</motion.span>
-    <div style={{height:2,background:'rgb(26 43 94 / .12)',borderRadius:2,overflow:'hidden'}}>
-      <motion.div style={{height:'100%',background:'var(--color-ink)',scaleX:fill,transformOrigin:'left'}}/>
+    <div className="carousel-progress-track">
+      <motion.div className="carousel-progress-fill" style={{scaleX:fill}}/>
     </div>
   </div>
 }
