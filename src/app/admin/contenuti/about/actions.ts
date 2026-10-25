@@ -2,7 +2,7 @@
 import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/src/utils/supabase/admin'
 import { uploadImage,deleteImages } from '@/src/utils/supabase/storage'
-import { galleryDraft,galleryUploadError,retainedGallerySlide,validGalleryImage,type GallerySlide,type GalleryKey,type GallerySaveResult } from '@/src/lib/about-gallery'
+import { galleryDraft,galleryCaptionError,galleryUploadError,retainedGallerySlide,validGalleryImage,type GallerySlide,type GalleryKey,type GallerySaveResult } from '@/src/lib/about-gallery'
 
 export async function saveAboutGallery(form:FormData,galleryKey:GalleryKey='about'):Promise<GallerySaveResult>{
   const {supabase}=await requireAdmin()
@@ -13,7 +13,9 @@ export async function saveAboutGallery(form:FormData,galleryKey:GalleryKey='abou
   if(typeof raw!=='string'||raw.length>48000||typeof revisionValue!=='string'||!/^\d{1,9}$/.test(revisionValue))return fail('Dati non validi. Ricarica la pagina.')
   let slides:GallerySlide[]|null
   try{slides=galleryDraft(JSON.parse(raw))}catch{return fail('Selezione non valida.')}
-  if(!slides)return fail('Controlla le foto: massimo 8, testo alternativo 160 caratteri, titolo 120 e descrizione 600.')
+  if(!slides)return fail('Controlla le foto e i testi: massimo 8 foto e testo alternativo di 160 caratteri.')
+  const captionError=galleryCaptionError(slides)
+  if(captionError)return fail(captionError)
   const {data:current,error:readError}=await supabase.from('site_galleries').select('slides,revision').eq('key',galleryKey).single()
   if(readError||!current)return fail('Impossibile leggere il carosello. Verifica la migrazione Supabase.')
   const revision=Number(revisionValue)

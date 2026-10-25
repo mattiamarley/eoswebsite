@@ -2,6 +2,8 @@ import { validRecordId } from './security.ts'
 import { publicImagePath } from './image-security.ts'
 export type GalleryKey='about'|'studio'
 export const ABOUT_GALLERY_MAX=8
+export const GALLERY_TITLE_MAX=60
+export const GALLERY_DESCRIPTION_MAX=160
 export type GallerySlide={id:string;src:string;alt:string;title?:string;description?:string}
 export type AboutGallery={slides:GallerySlide[]|null;revision:number}
 export type GallerySaveResult={success:boolean;message:string;gallery?:AboutGallery}
@@ -16,6 +18,11 @@ export function galleryDraft(value:unknown):GallerySlide[]|null {
     seen.add(raw.id);result.push({id:raw.id,src:raw.src,alt:raw.alt.trim(),title:title.trim(),description:description.trim()})
   }
   return result
+}
+// Keep reading older captions, but enforce compact text on every new save.
+export function galleryCaptionError(slides:GallerySlide[]):string|null {
+  if(slides.some(slide=>(slide.title??'').length>GALLERY_TITLE_MAX||(slide.description??'').length>GALLERY_DESCRIPTION_MAX))return `Usa al massimo ${GALLERY_TITLE_MAX} caratteri per il titolo e ${GALLERY_DESCRIPTION_MAX} per la descrizione. Accorcia i testi prima di salvare.`
+  return null
 }
 export function validGalleryImage(src:string,origin:string|undefined,galleryKey:GalleryKey='about'):boolean {
   const path=publicImagePath(src,origin)

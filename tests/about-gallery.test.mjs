@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {galleryDraft,validGalleryImage,retainedGallerySlide,galleryUploadError} from '../src/lib/about-gallery.ts'
+import {galleryDraft,galleryCaptionError,validGalleryImage,retainedGallerySlide,galleryUploadError} from '../src/lib/about-gallery.ts'
 const id='12345678-1234-1234-1234-123456789abc'
 const origin='https://example.supabase.co'
 const src=`${origin}/storage/v1/object/public/website-images/about/${id}.jpg`
@@ -46,4 +46,15 @@ test('gallery captions preserve legacy photos and validate optional display text
  assert.equal(galleryDraft([caption])[0].description,'Una visione condivisa.')
  for(const value of [{...slide,title:42},{...slide,title:'a'.repeat(121)},{...slide,title:'a\0b'},{...slide,description:{}},{...slide,description:'a'.repeat(601)},{...slide,description:'a\0b'}])assert.equal(galleryDraft([value]),null)
  assert.equal(galleryDraft([{...slide,title:'<script>alert(1)</script>'}])[0].title,'<script>alert(1)</script>')
+})
+
+// New saves are compact without making previously stored galleries disappear.
+test('caption limits apply to saves while existing longer captions remain readable',()=>{
+ assert.equal(galleryCaptionError([{...slide,title:'a'.repeat(60),description:'b'.repeat(160)}]),null)
+ assert.equal(galleryCaptionError([slide]),null)
+ for(const caption of [{...slide,title:'a'.repeat(61)},{...slide,description:'b'.repeat(161)}]){
+  const existing=galleryDraft([caption])
+  assert.ok(existing)
+  assert.ok(galleryCaptionError(existing))
+ }
 })
