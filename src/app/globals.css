@@ -869,7 +869,7 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 
 /* Editorial photo captions on an accent-colour fade. */
 .about-photo-showcase{height:clamp(340px,42vw,640px)}
-.photo-showcase-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgb(58 49 88 / 0) 22%,rgb(70 58 104 / .04) 40%,rgb(70 58 104 / .2) 60%,rgb(39 38 65 / .48) 80%,rgb(25 29 49 / .78) 100%)}
+.photo-showcase-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgb(103 82 149 / 0) 22%,rgb(111 87 161 / .06) 38%,rgb(104 80 151 / .2) 53%,rgb(80 62 118 / .42) 68%,rgb(46 40 78 / .68) 84%,rgb(27 30 55 / .9) 100%)}
 .photo-showcase-caption{position:absolute;z-index:1;left:clamp(24px,6vw,100px);right:clamp(24px,6vw,100px);bottom:clamp(28px,4vw,58px);max-width:1000px;text-align:left;color:#fff;transform:translateY(12px);transition:transform 900ms ease}
 .about-photo-slide[data-active=true] .photo-showcase-caption{transform:translateY(0)}
 .photo-showcase-caption h2{width:fit-content;max-width:100%;margin:0;font-size:clamp(36px,5.8vw,84px);line-height:1.04;letter-spacing:-.045em;font-weight:650;color:#fff;background:none;-webkit-text-fill-color:currentColor;text-shadow:0 2px 12px #111a3a30;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
