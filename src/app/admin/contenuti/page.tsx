@@ -1,5 +1,4 @@
-import { AdminBackLink } from '@/src/app/admin/_components/AdminBackLink'
-import { AdminSiteLink } from '@/src/app/admin/_components/AdminSiteLink'
+import { AdminHeader } from '@/src/app/admin/_components/AdminHeader'
 import { requireAdmin } from '@/src/utils/supabase/admin'
 import Link from 'next/link'
 
@@ -56,14 +55,9 @@ export default async function ContenutiPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="glass border-b border-white/50 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center gap-2 text-sm">
-          <AdminBackLink href="/admin"/><Link href="/admin" className="text-muted hover:text-ink transition">Dashboard</Link>
+      <AdminHeader backHref="/admin"><Link href="/admin" className="text-muted hover:text-ink transition">Dashboard</Link>
           <span aria-hidden="true" className="text-muted">/</span>
-          <span className="font-semibold text-ink">Contenuti</span>
-          <AdminSiteLink/>
-        </div>
-      </header>
+          <span className="font-semibold text-ink">Contenuti</span></AdminHeader>
 
       <main className="max-w-5xl mx-auto px-6 py-12">
         <div className="mb-10">

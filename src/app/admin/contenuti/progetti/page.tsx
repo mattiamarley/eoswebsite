@@ -1,5 +1,4 @@
-import { AdminBackLink } from '@/src/app/admin/_components/AdminBackLink'
-import { AdminSiteLink } from '@/src/app/admin/_components/AdminSiteLink'
+import { AdminHeader } from '@/src/app/admin/_components/AdminHeader'
 import { getProjectSchema } from '@/src/utils/supabase/project-schema'
 import { requireAdmin } from '@/src/utils/supabase/admin'
 import Link from 'next/link'
@@ -54,16 +53,11 @@ export default async function ProgettiPage({ searchParams }: Props) {
 
   return (
     <div className="min-h-screen">
-      <header className="glass border-b border-white/50 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center gap-2 text-sm">
-          <AdminBackLink href="/admin/contenuti"/><Link href="/admin" className="text-muted hover:text-ink transition">Dashboard</Link>
+      <AdminHeader backHref="/admin/contenuti"><Link href="/admin" className="text-muted hover:text-ink transition">Dashboard</Link>
           <span aria-hidden="true" className="text-muted">/</span>
           <Link href="/admin/contenuti" className="text-muted hover:text-ink transition">Contenuti</Link>
           <span aria-hidden="true" className="text-muted">/</span>
-          <span className="font-semibold text-ink">Progetti</span>
-          <AdminSiteLink/>
-        </div>
-      </header>
+          <span className="font-semibold text-ink">Progetti</span></AdminHeader>
 
       <main className="max-w-6xl mx-auto px-6 py-10">
         {loadError && <p role="alert" className="mb-6 rounded-lg bg-red-50 p-4 text-red-700">I progetti non sono raggiungibili in questo momento. I dati esistenti non sono stati modificati. Ricarica la pagina dopo aver verificato che Supabase sia attivo.</p>}

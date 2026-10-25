@@ -1,5 +1,4 @@
-import { AdminBackLink } from '@/src/app/admin/_components/AdminBackLink'
-import { AdminSiteLink } from '@/src/app/admin/_components/AdminSiteLink'
+import { AdminHeader } from '@/src/app/admin/_components/AdminHeader'
 import { formatSalary } from '@/src/lib/job-compensation'
 import { hasJobCompensation } from '@/src/utils/supabase/job-schema'
 import { requireAdmin } from '@/src/utils/supabase/admin'
@@ -81,16 +80,11 @@ export default async function LavoroPage({ searchParams }: Props) {
 
   return (
     <div className="min-h-screen">
-      <header className="glass border-b border-white/50 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center gap-2 text-sm">
-          <AdminBackLink href="/admin/contenuti"/><Link href="/admin" className="text-muted hover:text-ink transition">Dashboard</Link>
+      <AdminHeader backHref="/admin/contenuti"><Link href="/admin" className="text-muted hover:text-ink transition">Dashboard</Link>
           <span aria-hidden="true" className="text-muted">/</span>
           <Link href="/admin/contenuti" className="text-muted hover:text-ink transition">Contenuti</Link>
           <span aria-hidden="true" className="text-muted">/</span>
-          <span className="font-semibold text-ink">Lavoro</span>
-          <AdminSiteLink/>
-        </div>
-      </header>
+          <span className="font-semibold text-ink">Lavoro</span></AdminHeader>
 
       <main className="max-w-6xl mx-auto px-6 py-10">
         {(loadError||schemaFailed)&&<p role="alert" className="text-red-700 mb-5">Impossibile caricare o verificare le posizioni. Riprova.</p>}
