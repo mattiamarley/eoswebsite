@@ -857,3 +857,12 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 .admin-site-link:hover{background:linear-gradient(135deg,#fff,#c9bfe4de);box-shadow:inset 0 1px 3px #fff,0 5px 16px #1829561a}
 .admin-site-link:focus-visible{outline:3px solid #8875b8;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.admin-site-link{transition:none}}
+
+/* Two-tone photo countdown, synced to the carousel's five-second timer. */
+.carousel-progress{position:relative;width:132px;padding:4px;margin:16px auto 0;border:1px solid #ffffffb8;border-radius:999px;background:linear-gradient(135deg,#ffffffdc,#eee9f6b8);box-shadow:inset 0 1px 2px #fff,0 4px 14px #18295616;backdrop-filter:blur(16px);pointer-events:none}
+.carousel-progress-track{display:block;height:5px;overflow:hidden;border-radius:999px;background:#d5cce8;box-shadow:inset 0 1px 2px #18295612}
+.carousel-progress-fill{display:block;width:100%;height:100%;border-radius:inherit;transform:scaleX(0);transform-origin:left center;background:linear-gradient(90deg,#253568 0%,#8c74bc 100%);box-shadow:inset 0 1px 1px #ffffff55}
+.carousel-progress-overlay{position:absolute;z-index:2;bottom:20px;left:50%;translate:-50% 0;margin:0}
+.featured-projects>.carousel-progress+.featured-controls{margin-top:10px}
+@media(max-width:600px){.carousel-progress{width:110px}.carousel-progress-overlay{bottom:16px}}
+@media(prefers-reduced-motion:reduce){.carousel-progress{display:none}}

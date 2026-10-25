@@ -5,6 +5,7 @@ import { ArrowIcon } from './ArrowIcon'
 import { useCallback, useRef, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { useCarouselPlayback } from './useCarouselPlayback'
+import { CarouselProgress } from './CarouselProgress'
 
 export function ProjectCarousel({ images, title }: { images: string[]; title: string }) {
   const track = useRef<HTMLDivElement>(null)
@@ -18,7 +19,7 @@ export function ProjectCarousel({ images, title }: { images: string[]; title: st
     el.scrollTo({left:target*el.clientWidth,behavior:reduced||target===0?'instant':'smooth'})
   },[images.length,reduced])
   const advance=useCallback(()=>go(active+1),[active,go])
-  const {regionRef,restart,events}=useCarouselPlayback(images.length,advance)
+  const {regionRef,progressRef,restart,events}=useCarouselPlayback(images.length,advance)
   function select(index:number){restart();go(index)}
   return <section ref={regionRef} {...events} className="project-carousel" aria-label={`Fotografie di ${title}`} aria-roledescription="carosello">
     <div ref={track} className="project-carousel-track" tabIndex={multiple ? 0 : undefined}
@@ -36,6 +37,7 @@ export function ProjectCarousel({ images, title }: { images: string[]; title: st
         <Image src={url} alt={`${title} — fotografia ${index + 1}`} width={1200} height={800} sizes="(max-width:760px) 90vw, 700px" className="project-carousel-photo" draggable={false}/>
       </div>)}
     </div>
+    {multiple&&<CarouselProgress fillRef={progressRef}/>}
     {multiple && <div className="project-carousel-controls">
       <button type="button" className="round-button glass" aria-label="Foto precedente" disabled={active === 0} onClick={() => select(active - 1)}><ArrowIcon direction="left"/></button>
       <span className="project-carousel-count" aria-live="off" aria-atomic="true">{String(active + 1).padStart(2, '0')} <span>/ {String(images.length).padStart(2, '0')}</span></span>

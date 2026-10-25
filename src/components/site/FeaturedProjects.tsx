@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowIcon } from './ArrowIcon'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useCarouselPlayback } from './useCarouselPlayback'
+import { CarouselProgress } from './CarouselProgress'
 import type { PublicCard } from './ContentCards'
 import { GlassDialog } from './GlassDialog'
 import { ProjectCarousel } from './ProjectCarousel'
@@ -28,7 +29,7 @@ export function FeaturedProjects({items,previewOnly=false}:{items:PublicCard[];p
   const current=slides.length?active%slides.length:0
   const count=slides.length
   const advance=useCallback(()=>setActive(value=>(value+1)%count),[count,setActive])
-  const {regionRef,restart,events}=useCarouselPlayback(slides.length,advance,!!detail)
+  const {regionRef,progressRef,restart,events}=useCarouselPlayback(slides.length,advance,!!detail)
   useEffect(()=>{
     const sync=()=>setSelected(new URLSearchParams(window.location.hash.slice(1)).get('evidenza'))
     sync();window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync)
@@ -50,6 +51,7 @@ export function FeaturedProjects({items,previewOnly=false}:{items:PublicCard[];p
         </div>
       </article>})}
     </div>
+    {slides.length>1&&<CarouselProgress fillRef={progressRef}/>}
     {slides.length>1&&<div className="featured-controls">
       <button className="featured-minimal-arrow" onClick={()=>move(-1)} aria-label="Progetto precedente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="M20 12H4m7-7-7 7 7 7"/></svg></button>
       <div className="featured-pagination">{slides.map((item,index)=><button key={item.id} aria-label={`Mostra ${item.title}`} aria-pressed={current===index} onClick={()=>{restart();setActive(index)}}><span/></button>)}</div>
