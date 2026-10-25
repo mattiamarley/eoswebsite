@@ -10,10 +10,10 @@ export async function saveAboutGallery(form:FormData,galleryKey:GalleryKey='abou
   if(galleryKey!=='about'&&galleryKey!=='studio')return fail('Sezione non valida.')
   const label=galleryKey==='studio'?'Studio':'About'
   const raw=form.get('slides'),revisionValue=form.get('revision')
-  if(typeof raw!=='string'||raw.length>24000||typeof revisionValue!=='string'||!/^\d{1,9}$/.test(revisionValue))return fail('Dati non validi. Ricarica la pagina.')
+  if(typeof raw!=='string'||raw.length>48000||typeof revisionValue!=='string'||!/^\d{1,9}$/.test(revisionValue))return fail('Dati non validi. Ricarica la pagina.')
   let slides:GallerySlide[]|null
   try{slides=galleryDraft(JSON.parse(raw))}catch{return fail('Selezione non valida.')}
-  if(!slides)return fail('Sono consentite fino a 8 foto, ciascuna con un testo alternativo di massimo 160 caratteri.')
+  if(!slides)return fail('Controlla le foto: massimo 8, testo alternativo 160 caratteri, titolo 120 e descrizione 600.')
   const {data:current,error:readError}=await supabase.from('site_galleries').select('slides,revision').eq('key',galleryKey).single()
   if(readError||!current)return fail('Impossibile leggere il carosello. Verifica la migrazione Supabase.')
   const revision=Number(revisionValue)
@@ -49,5 +49,5 @@ export async function saveAboutGallery(form:FormData,galleryKey:GalleryKey='abou
   // Only delete gallery-owned objects, never images belonging to portfolio or team.
   if(removed.length)await deleteImages(supabase,removed).catch(()=>console.error('[aboutGallery] removed-image cleanup failed'))
   revalidatePath('/admin/contenuti/caroselli');revalidatePath(`/${galleryKey}`);revalidatePath(`/admin/contenuti/${galleryKey}`)
-  return {success:true,message:resolved.length?`Carosello salvato. La pagina ${label} è aggiornata.`:'Carosello nascosto dalla pagina About.',gallery:{slides:resolved,revision:revision+1}}
+  return {success:true,message:resolved.length?`Carosello salvato. La pagina ${label} è aggiornata.`:`Carosello nascosto dalla pagina ${label}.`,gallery:{slides:resolved,revision:revision+1}}
 }

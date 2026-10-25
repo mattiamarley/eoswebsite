@@ -2,7 +2,7 @@ import { validRecordId } from './security.ts'
 import { publicImagePath } from './image-security.ts'
 export type GalleryKey='about'|'studio'
 export const ABOUT_GALLERY_MAX=8
-export type GallerySlide={id:string;src:string;alt:string}
+export type GallerySlide={id:string;src:string;alt:string;title?:string;description?:string}
 export type AboutGallery={slides:GallerySlide[]|null;revision:number}
 export type GallerySaveResult={success:boolean;message:string;gallery?:AboutGallery}
 export function galleryDraft(value:unknown):GallerySlide[]|null {
@@ -11,7 +11,9 @@ export function galleryDraft(value:unknown):GallerySlide[]|null {
   const result:GallerySlide[]=[]
   for(const raw of value){
     if(!raw||typeof raw!=='object'||!validRecordId(raw.id)||seen.has(raw.id)||typeof raw.src!=='string'||raw.src.length>2048||typeof raw.alt!=='string'||!raw.alt.trim()||raw.alt.length>160||/[\x00-\x1f]/.test(raw.alt))return null
-    seen.add(raw.id);result.push({id:raw.id,src:raw.src,alt:raw.alt.trim()})
+    const title=raw.title===undefined?'':raw.title, description=raw.description===undefined?'':raw.description
+    if(typeof title!=='string'||title.length>120||/[\x00-\x1f]/.test(title)||typeof description!=='string'||description.length>600||description.includes('\0'))return null
+    seen.add(raw.id);result.push({id:raw.id,src:raw.src,alt:raw.alt.trim(),title:title.trim(),description:description.trim()})
   }
   return result
 }

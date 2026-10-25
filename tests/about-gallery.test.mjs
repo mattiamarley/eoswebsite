@@ -37,3 +37,13 @@ test('Studio and About cannot retain or delete each other’s images',()=>{
  assert.equal(retainedGallerySlide(studio,[studio],origin,'about'),false)
  assert.equal(validGalleryImage(studioSrc.replace(id,'-'.repeat(36)),origin,'studio'),false)
 })
+
+test('gallery captions preserve legacy photos and validate optional display text',()=>{
+ assert.equal(galleryDraft([slide])[0].title,'')
+ assert.equal(galleryDraft([slide])[0].description,'')
+ const caption={...slide,title:' San Siro ',description:' Una visione condivisa. '}
+ assert.equal(galleryDraft([caption])[0].title,'San Siro')
+ assert.equal(galleryDraft([caption])[0].description,'Una visione condivisa.')
+ for(const value of [{...slide,title:42},{...slide,title:'a'.repeat(121)},{...slide,title:'a\0b'},{...slide,description:{}},{...slide,description:'a'.repeat(601)},{...slide,description:'a\0b'}])assert.equal(galleryDraft([value]),null)
+ assert.equal(galleryDraft([{...slide,title:'<script>alert(1)</script>'}])[0].title,'<script>alert(1)</script>')
+})
