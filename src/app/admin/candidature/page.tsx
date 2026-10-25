@@ -1,3 +1,4 @@
+import { AdminBackLink } from '@/src/app/admin/_components/AdminBackLink'
 import { AdminSiteLink } from '@/src/app/admin/_components/AdminSiteLink'
 import { requireAdmin } from '@/src/utils/supabase/admin'
 import Link from 'next/link'
@@ -26,7 +27,7 @@ export default async function CandidaturePage({searchParams}:{searchParams:Promi
   const groups=new Map<string,{title:string;items:Application[]}>()
   for(const app of applications){const key=app.application_type==='spontaneous'?'spontaneous':app.job_id??app.job_title??'deleted';if(!groups.has(key))groups.set(key,{title:app.application_type==='spontaneous'?'Candidatura spontanea':app.job_title||app.jobs?.title||'Posizione non più presente',items:[]});groups.get(key)!.items.push(app)}
   return <div className="min-h-screen">
-    <header className="glass border-b border-white/50 sticky top-0 z-10"><nav className="max-w-6xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center gap-2 text-sm" aria-label="Percorso"><Link href="/admin">Dashboard</Link><span aria-hidden="true" className="text-muted">/</span><span>Candidature</span><AdminSiteLink/></nav></header>
+    <header className="glass border-b border-white/50 sticky top-0 z-10"><nav className="max-w-6xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center gap-2 text-sm" aria-label="Percorso"><AdminBackLink href="/admin"/><Link href="/admin">Dashboard</Link><span aria-hidden="true" className="text-muted">/</span><span>Candidature</span><AdminSiteLink/></nav></header>
     <main className="max-w-6xl mx-auto px-6 py-10">
       <h1 className="text-2xl font-bold text-ink">Hub candidature</h1><p className="text-sm text-muted mt-2 mb-6">Contatti, curriculum e presentazione, raccolti per posizione e per candidatura spontanea.</p>
       {params.error&&<p role="alert" className="rounded-xl p-4 mb-5 bg-red-50 text-red-700">Modifica non salvata. Ricarica e riprova.</p>}
