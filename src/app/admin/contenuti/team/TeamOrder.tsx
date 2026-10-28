@@ -22,7 +22,7 @@ export function TeamOrder({members,enabled,error}:{members:Member[];enabled:bool
       try {
         const result=await reorderTeam(items.map(m=>m.id))
         if(result.error)setMessage(result.error)
-        else {setSaved(items.map(m=>m.id).join(','));setMessage('Ordine salvato. La pagina Studio è aggiornata.')}
+        else {setSaved(items.map(m=>m.id).join(','));setMessage('Ordine salvato. La pagina Ufficio è aggiornata.')}
       } catch {setMessage('Salvataggio non riuscito. Riprova senza chiudere la pagina.')}
     })
   }

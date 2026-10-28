@@ -4,7 +4,7 @@ import { requireAdmin } from '@/src/utils/supabase/admin'
 import { galleryDraft,type GalleryKey } from '@/src/lib/about-gallery'
 import { AboutGalleryEditor } from './AboutGalleryEditor'
 export async function GalleryAdminPage({galleryKey,embedded=false}:{galleryKey:GalleryKey;embedded?:boolean}){
-  const label=galleryKey==='studio'?'Studio':'About'
+  const label=galleryKey==='studio'?'Ufficio':'About'
   const {supabase}=await requireAdmin()
   const {data,error}=await supabase.from('site_galleries').select('slides,revision').eq('key',galleryKey).single()
   const missing=error&&['42P01','PGRST205','PGRST116'].includes(error.code)

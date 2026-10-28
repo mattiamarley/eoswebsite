@@ -50,7 +50,7 @@ export async function ContentCards({kind,limit,portfolioPage=false,featured=fals
   if(featured && !failed) return <FeaturedProjects items={items} previewOnly/>
   if(featured && failed && process.env.NODE_ENV==='development') return <FeaturedProjects items={[]} previewOnly/>
   if(failed && kind==='projects' && process.env.NODE_ENV==='development') return portfolioPage?<SamplePortfolio/>:<Cards kind="projects" limit={limit} animateEntrance={!!limit}/>
-  if(failed) return <div className="empty-state"><p>Contenuti temporaneamente non disponibili.</p><a className="pill-button" href="mailto:eos@eosweb.it">Contatta lo studio <ArrowIcon/></a></div>
+  if(failed) return <div className="empty-state"><p>Contenuti temporaneamente non disponibili.</p><a className="pill-button" href="mailto:eos@eosweb.it">Contatta l’ufficio <ArrowIcon/></a></div>
   if(!items.length) return <div className="empty-state"><p>{kind==='jobs'?'Al momento non ci sono posizioni aperte.':kind==='team'?'Il team sarà presentato qui a breve.':'Il portfolio è in aggiornamento.'}</p></div>
   if(portfolioPage)return <PortfolioLayout items={items}/>
   return <Cards kind={kind} animateEntrance={!!limit} data={items} limit={limit} applicationsEnabled={process.env.APPLICATIONS_ENABLED==='true' && !!process.env.SUPABASE_SERVICE_ROLE_KEY}/>

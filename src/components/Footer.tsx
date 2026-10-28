@@ -1,68 +1,28 @@
 import Link from 'next/link'
+import { OFFICES, OFFICE_PHONE } from '@/src/lib/offices'
 
 export function Footer() {
   return (
     <footer style={{ backgroundColor: '#091a45' }} className="text-white">
       <div className="max-w-[1440px] mx-auto px-6 sm:px-10 md:px-20 pt-12 md:pt-16 pb-8 md:pb-12">
 
-        {/* Griglia principale */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-[260px_1fr_1fr_1fr] md:gap-8">
-
-          {/* Logo — occupa tutta la larghezza su mobile */}
-          <div className="col-span-2 md:col-span-1 flex items-end">
-            <span
-              className="leading-none select-none"
-              style={{
-                fontFamily: 'Arial, sans-serif',
-                fontSize: 'clamp(56px, 14vw, 96px)',
-                letterSpacing: '-2px',
-                color: 'white',
-              }}
-            >
-              eos
-            </span>
-          </div>
-
-          {/* Info azienda — occupa tutta la larghezza su mobile */}
-          <div className="col-span-2 md:col-span-1">
-            <p
-              className="font-bold leading-tight mb-4"
-              style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', letterSpacing: '-0.4px' }}
-            >
-              Eos s.r.l.<br />
-              Progettazione civile,<br />
-              ambiente e sicurezza
-            </p>
-            <div className="text-white/70 space-y-0.5 text-sm md:text-base" style={{ lineHeight: '23px', letterSpacing: '-0.28px' }}>
+        <div className="footer-overview">
+          <div className="footer-company">
+            <span className="leading-none select-none" style={{fontFamily:'Arial, sans-serif',fontSize:'clamp(56px, 8vw, 80px)',letterSpacing:'-2px'}}>eos</span>
+            <p className="font-bold leading-tight mt-5 mb-4 text-base md:text-[20px]">Eos s.r.l.<br/>Progettazione civile,<br/>ambiente e sicurezza</p>
+            <div className="text-white/70 text-sm md:text-base leading-relaxed">
               <p><a href="mailto:eos@eosweb.it">eos@eosweb.it</a></p>
               <p>C.F. 12266450159</p>
-              <p><a href="tel:+39022666092">T +39 022666092</a></p>
+              <p><a href={OFFICE_PHONE.href}>{OFFICE_PHONE.label}</a></p>
             </div>
           </div>
-
-          {/* Milano */}
-          <div>
-            <p className="font-bold mb-3 text-base md:text-[20px]" style={{ letterSpacing: '-0.4px' }}>
-              Milano
-            </p>
-            <div className="text-white/70 space-y-0.5 text-sm md:text-base" style={{ lineHeight: '23px', letterSpacing: '-0.28px' }}>
-              <p>Via Nicola Antonio Porpora, 98</p>
-              <p>20131 Milano - Italia</p>
-              <p><a href="tel:+39022666092">T +39 022666092</a></p>
+          <div className="footer-offices">{OFFICES.map(office=><div key={office.city}>
+            <p className="font-bold mb-3 text-base md:text-[20px]">{office.city}</p>
+            <div className="text-white/70 text-sm md:text-base leading-relaxed">
+              <p>{office.address}</p><p>{office.postalCode} {office.city} - Italia</p>
+              <p><a href={OFFICE_PHONE.href}>{OFFICE_PHONE.label}</a></p>
             </div>
-          </div>
-
-          {/* Roma */}
-          <div>
-            <p className="font-bold mb-3 text-base md:text-[20px]" style={{ letterSpacing: '-0.4px' }}>
-              Roma
-            </p>
-            <div className="text-white/70 space-y-0.5 text-sm md:text-base" style={{ lineHeight: '23px', letterSpacing: '-0.28px' }}>
-              <p>Via dei Laterani, 36</p>
-              <p>00184 Roma - Italia</p>
-              <p><a href="tel:+39022666092">T +39 022666092</a></p>
-            </div>
-          </div>
+          </div>)}</div>
         </div>
 
         {/* Divisore */}

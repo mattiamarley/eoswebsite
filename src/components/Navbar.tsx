@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { MobileNavigation } from './site/MobileNavigation'
 
-const links = [['/about','About'],['/portfolio','Portfolio'],['/studio','Studio'],['/jobs','Jobs'],['/contatti','Contatti']]
+const links = [['/about','About'],['/portfolio','Portfolio'],['/studio','Ufficio'],['/jobs','Jobs'],['/contatti','Contatti']]
 
 export function Navbar() {
   const menuTrigger = useRef<HTMLButtonElement|null>(null)

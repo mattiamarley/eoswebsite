@@ -45,7 +45,7 @@ export function FeaturedProjects({items,previewOnly=false}:{items:PublicCard[];p
       {slides.map((item,index)=>{const offset=(index-current+slides.length)%slides.length;const position=offset===0?'current':offset===1?'next':offset===slides.length-1?'previous':'hidden';return <article key={item.id} className={`featured-slide is-${position}`} aria-hidden={index!==current} inert={index!==current}>
         {item.images?.[0]&&<Image src={item.images[0]} alt={item.title} fill sizes="(max-width:640px) 90vw, 80vw" priority={index===0}/>}
         <div className="featured-shade"/>
-        <span className="featured-badge">{isDemo?'STUDIO VISIVO / MOCKUP':item.is_featured?'★ PROGETTO IN EVIDENZA':'PROGETTO EOS'}</span>
+        <span className="featured-badge">{isDemo?'CONCEPT VISIVO / MOCKUP':item.is_featured?'★ PROGETTO IN EVIDENZA':'PROGETTO EOS'}</span>
         <div className="featured-caption"><div><span className="featured-category">{item.tags?.join(' · ')||item.category}</span><h2>{item.title}</h2><p className="featured-summary">{previewOnly&&item.description?(item.description.length>210?item.description.slice(0,207).trimEnd()+'…':item.description):(item.subtitle||'Dalla visione alla realizzazione')}</p></div>
           {!previewOnly&&<button tabIndex={index===current?0:-1} className="featured-open" aria-label={`Scopri ${item.title}`} onClick={e=>{trigger.current=e.currentTarget;open(item)}}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg></button>}
         </div>

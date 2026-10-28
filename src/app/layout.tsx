@@ -11,7 +11,7 @@ const inter = localFont({
 
 export const metadata: Metadata = {
   title: "EOS | Ingegneria e progettazione integrata",
-  description: "EOS — Progettazione civile, ambiente e sicurezza. Studio di ingegneria a Milano e Roma.",
+  description: "EOS — Progettazione civile, ambiente e sicurezza. Ufficio di ingegneria a Milano, Roma e Trieste.",
 };
 
 export default function RootLayout({

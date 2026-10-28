@@ -14,9 +14,9 @@ export async function SiteGallery({galleryKey}:{galleryKey:GalleryKey}){
       if(slides)dedicated=slides.filter(slide=>validGalleryImage(slide.src,process.env.NEXT_PUBLIC_SUPABASE_URL,galleryKey))
     }
   }catch{}
-  if(dedicated!==undefined)return dedicated.length?<PhotoShowcase label={galleryKey==='studio'?'Fotografie dello studio EOS':'Immagini dei progetti'} key={JSON.stringify(dedicated)} images={dedicated}/>:null
+  if(dedicated!==undefined)return dedicated.length?<PhotoShowcase label={galleryKey==='studio'?'Fotografie dell’ufficio EOS':'Immagini dei progetti'} key={JSON.stringify(dedicated)} images={dedicated}/>:null
 
-  if(galleryKey==='studio')return <PhotoShowcase label="Fotografie dello studio EOS" images={[{src:'/images/studio-reference.webp',alt:'Professionisti riuniti attorno a un tavolo di lavoro',title:'EOS Studio.',description:'La squadra. Competenze diverse, una direzione condivisa.'}]}/>
+  if(galleryKey==='studio')return <PhotoShowcase label="Fotografie dell’ufficio EOS" images={[{src:'/images/studio-reference.webp',alt:'Professionisti riuniti attorno a un tavolo di lavoro',title:'EOS Ufficio.',description:'La squadra. Competenze diverse, una direzione condivisa.'}]}/>
   try {const client=await createClient();const {data,error}=await client.from('projects').select('title,images,description').order('created_at',{ascending:false}).limit(8).abortSignal(AbortSignal.timeout(3000));if(!error) images=(data??[]).flatMap(row=>(Array.isArray(row.images)?row.images:[]).filter((url):url is string=>typeof url==='string'&&publicImagePath(url,process.env.NEXT_PUBLIC_SUPABASE_URL)!==null).map(src=>({src,alt:row.title,title:row.title,description:row.description??undefined}))).slice(0,8)}catch{}
   if(!images.length)images=[0,1,2].map(index=>({src:`/images/featured-stock-${index}.jpg`,alt:'Fotografia illustrativa di architettura'}))
   return <PhotoShowcase images={images}/>

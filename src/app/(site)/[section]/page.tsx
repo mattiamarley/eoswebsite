@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { ContentLoading } from '@/src/components/site/ContentLoading'
+import { OFFICES, OFFICE_PHONE } from '@/src/lib/offices'
 import { ContactMap } from '@/src/components/site/ContactMap'
 import { ArrowIcon } from '@/src/components/site/ArrowIcon'
 import type { Metadata } from 'next'
@@ -14,9 +15,9 @@ import { StudioLayout } from '@/src/components/site/StudioLayout'
 const sections: Record<string,[string,string]> = {
   about:['Progettazione integrata','Competenze diverse, una direzione condivisa'],
   portfolio:['I nostri progetti','Dalla visione alla realizzazione'],
-  studio:['Lo studio','Le persone dietro ogni progetto'],
+  studio:["L’ufficio",'Le persone dietro ogni progetto'],
   jobs:['Lavora con noi','Costruiamo insieme il prossimo passo'],
-  contatti:['Parliamone insieme','Milano e Roma, un unico studio'],
+  contatti:['Parliamone insieme','Milano, Roma e Trieste, un unico ufficio'],
   'privacy-policy':['Privacy policy','Informativa in preparazione'],
   'cookie-policy':['Cookie policy','Informativa in preparazione'],
 }
@@ -33,8 +34,8 @@ export default async function SectionPage({params}: {params:Promise<{section:str
     {section==='about' && <><div className="section-heading"><h2>I nostri servizi<br/><span>Competenze e professionalità</span></h2></div><Cards kind="services"/></>}
     {section==='studio' && <ContentCards kind="team"/>}
     {section==='jobs' && <><Suspense fallback={<ContentLoading label="Caricamento posizioni"/>}><ContentCards kind="jobs"/></Suspense><SpontaneousApplication enabled={process.env.APPLICATIONS_ENABLED==='true'&&!!process.env.SUPABASE_SERVICE_ROLE_KEY}/></>}
-    {section==='contatti' && <><div className="contact-methods"><a href="tel:+39022666092">+39 02 2666092 <ArrowIcon/></a><a href="mailto:eos@eosweb.it">eos@eosweb.it <ArrowIcon/></a><a href="mailto:eossrl@arubapec.it">eossrl@arubapec.it <ArrowIcon/></a></div><p className="body-copy">{lorem}</p><div className="contact-grid">{[['Milano','Via Nicola Antonio Porpora, 98','20131 Milano'],['Roma','Via dei Laterani, 36','00184 Roma']].map(([city,address,zip])=><article key={city} className="address-card">
-<ContactMap city={city} address={address} zip={zip}/><span className="eyebrow">SEDE / {city}</span><h2>{city}</h2><p>{address}<br/>{zip}, Italia</p><a className="pill-button" style={{marginTop:25}} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address+', '+city)}`} target="_blank" rel="noopener noreferrer">Indicazioni stradali <ArrowIcon/></a></article>)}</div></>}
+    {section==='contatti' && <><div className="contact-methods"><a href="tel:+39022666092">+39 02 2666092 <ArrowIcon/></a><a href="mailto:eos@eosweb.it">eos@eosweb.it <ArrowIcon/></a><a href="mailto:eossrl@arubapec.it">eossrl@arubapec.it <ArrowIcon/></a></div><p className="body-copy">{lorem}</p><div className="contact-grid">{OFFICES.map(({city,address,postalCode})=><article key={city} className="address-card">
+<ContactMap city={city} address={address} zip={`${postalCode} ${city}`}/><span className="eyebrow">SEDE / {city}</span><h2>{city}</h2><p>{address}<br/>{postalCode} {city} - Italia</p><a className="address-phone" href={OFFICE_PHONE.href}>{OFFICE_PHONE.label}</a><a className="pill-button" style={{marginTop:25}} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address+', '+city)}`} target="_blank" rel="noopener noreferrer">Indicazioni stradali <ArrowIcon/></a></article>)}</div></>}
     {section.includes('policy') && <div className="empty-state"><p className="body-copy">Questa pagina è in preparazione. Il testo definitivo deve essere completato e verificato prima della pubblicazione del sito.</p><a href="mailto:eos@eosweb.it" className="pill-button">Contatta EOS <ArrowIcon/></a></div>}
   </div>{!section.includes('policy') && section!=='contatti' && <ContactBanner/>}</>
 }

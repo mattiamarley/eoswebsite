@@ -8,7 +8,7 @@ export async function saveAboutGallery(form:FormData,galleryKey:GalleryKey='abou
   const {supabase}=await requireAdmin()
   const fail=(message:string):GallerySaveResult=>({success:false,message})
   if(galleryKey!=='about'&&galleryKey!=='studio')return fail('Sezione non valida.')
-  const label=galleryKey==='studio'?'Studio':'About'
+  const label=galleryKey==='studio'?'Ufficio':'About'
   const raw=form.get('slides'),revisionValue=form.get('revision')
   if(typeof raw!=='string'||raw.length>48000||typeof revisionValue!=='string'||!/^\d{1,9}$/.test(revisionValue))return fail('Dati non validi. Ricarica la pagina.')
   let slides:GallerySlide[]|null
