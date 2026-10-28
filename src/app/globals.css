@@ -814,8 +814,8 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 /* Open positions: horizontal navy cards, with salary and seniority. */
 .cards-grid.jobs{grid-template-columns:minmax(0,1fr);gap:44px}
 .jobs .content-card{position:relative;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr);gap:52px;align-items:start;min-height:250px;aspect-ratio:auto;background:#0c1b46;color:#fff;border:1px solid #ffffff20;border-radius:40px;padding:34px 64px 48px 40px;text-align:left;box-shadow:0 8px 18px #0c1b4626;overflow:hidden}
-.jobs .content-card{transition:translate .3s ease,box-shadow .3s ease}
-.jobs .content-card:hover,.jobs .content-card:focus-visible{transform:none;translate:0 -4px;box-shadow:0 15px 30px #0c1b4630}
+.jobs .content-card{transition:box-shadow .25s ease,border-color .25s ease}
+.jobs .content-card:hover,.jobs .content-card:focus-visible{transform:none;border-color:#ffffff60;box-shadow:0 18px 36px #0c1b4645}
 .jobs .content-card:focus-visible{outline:3px solid #9788c2;outline-offset:5px}
 .jobs .job-overview h3{font-size:clamp(26px,3.2vw,44px);line-height:1.12;letter-spacing:-.035em;color:#fff;margin:0;overflow-wrap:anywhere}
 .jobs .job-location{font-size:18px;line-height:1.4;color:#f1f1f8;margin:10px 0 12px}
