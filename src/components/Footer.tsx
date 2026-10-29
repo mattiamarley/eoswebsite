@@ -7,9 +7,9 @@ export function Footer() {
       <div className="max-w-[1440px] mx-auto px-6 sm:px-10 md:px-20 pt-12 md:pt-16 pb-8 md:pb-12">
 
         <div className="footer-overview">
+          <span className="footer-logo leading-none select-none" style={{fontFamily:'Arial, sans-serif',fontSize:'clamp(56px, 8vw, 80px)',letterSpacing:'-2px'}}>eos</span>
           <div className="footer-company">
-            <span className="leading-none select-none" style={{fontFamily:'Arial, sans-serif',fontSize:'clamp(56px, 8vw, 80px)',letterSpacing:'-2px'}}>eos</span>
-            <p className="font-bold leading-tight mt-5 mb-4 text-base md:text-[20px]">Eos s.r.l.<br/>Progettazione civile,<br/>ambiente e sicurezza</p>
+            <p className="font-bold leading-tight mb-4 text-base md:text-[20px]">Eos s.r.l.<br/>Progettazione civile,<br/>ambiente e sicurezza</p>
             <div className="text-white/70 text-sm md:text-base leading-relaxed">
               <p><a href="mailto:eos@eosweb.it">eos@eosweb.it</a></p>
               <p>C.F. 12266450159</p>
@@ -17,7 +17,7 @@ export function Footer() {
             </div>
           </div>
           <div className="footer-offices">{OFFICES.map(office=><div key={office.city}>
-            <p className="font-bold mb-3 text-base md:text-[20px]">{office.city}</p>
+            <p className="font-bold leading-tight mb-3 text-base md:text-[20px]">{office.city}</p>
             <div className="text-white/70 text-sm md:text-base leading-relaxed">
               <p>{office.address}</p><p>{office.postalCode} {office.city} - Italia</p>
               <p><a href={OFFICE_PHONE.href}>{OFFICE_PHONE.label}</a></p>

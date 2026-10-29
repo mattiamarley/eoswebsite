@@ -890,11 +890,13 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 @media(max-width:640px){.admin-navigation{grid-template-columns:minmax(0,1fr) auto;gap:10px 12px}.admin-navigation>.admin-back-link{grid-column:1;grid-row:1;justify-self:start}.admin-navigation-actions{grid-column:2;grid-row:1;gap:8px}.admin-breadcrumbs{grid-column:1 / -1;grid-row:2;font-size:12px}}
 
 /* Three offices share the same order in the footer and contact maps. */
-.footer-overview{display:grid;grid-template-columns:minmax(190px,.8fr) minmax(0,2.4fr);gap:48px}
-.footer-offices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;padding-top:10px}
+.footer-overview{display:grid;grid-template-columns:minmax(190px,.8fr) minmax(0,2.4fr);gap:20px 48px;align-items:start}
+.footer-logo{grid-column:1;grid-row:1}
+.footer-company{grid-column:1;grid-row:2}
+.footer-offices{grid-column:2;grid-row:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
 .address-phone{display:block;width:fit-content;margin-top:14px;font-size:14px}
 .address-card .pill-button{padding:14px 18px;font-size:12px;gap:12px}
-@media(max-width:1023px){.contact-grid{grid-template-columns:1fr}.footer-overview{grid-template-columns:1fr;gap:36px}}
+@media(max-width:1023px){.contact-grid{grid-template-columns:1fr}.footer-overview{grid-template-columns:1fr;gap:20px}.footer-offices{grid-column:1;grid-row:3;margin-top:16px}}
 @media(max-width:600px){.footer-offices{grid-template-columns:1fr;gap:28px}}
 
 /* Solid navy navigation; the white halo appears only while expanded. */
