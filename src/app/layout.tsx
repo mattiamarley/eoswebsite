@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_URL, pageMetadata } from "@/src/lib/site-seo";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -10,8 +11,9 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "EOS | Ingegneria e progettazione integrata",
-  description: "EOS — Progettazione civile, ambiente e sicurezza. Ufficio di ingegneria a Milano, Roma e Trieste.",
+  metadataBase: new URL(SITE_URL),
+  applicationName: "EOS",
+  ...pageMetadata('/'),
 };
 
 export default function RootLayout({

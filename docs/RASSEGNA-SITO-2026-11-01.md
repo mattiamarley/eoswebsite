@@ -9,7 +9,7 @@
 - Responsive di About e Ufficio: titoli lunghi del carosello fino a tre righe sul mobile, font fluido 20–24 px, descrizione 13 px fino a quattro righe e più spazio verticale per la foto. Il titolo lungo presente nel CMS ora è interamente leggibile nel formato stretto verificato.
 - Testo conclusivo con larghezza vincolata, sottotitolo adattivo e righe bilanciate. Sul mobile il paragrafo è allineato a sinistra anziché giustificato.
 
-Non sono stati cambiati i contenuti Supabase, le offerte di lavoro, le persone, le impostazioni Vercel o le informative. I punti sotto restano da affrontare uno alla volta.
+Non sono stati cambiati i contenuti Supabase, le offerte di lavoro, le persone, le impostazioni Vercel o le informative. I punti sotto riportano anche gli esiti dei successivi ricontrolli e gli interventi richiesti separatamente.
 
 ## Ambito e risultati delle verifiche
 
@@ -36,7 +36,7 @@ Controllati inoltre accesso admin senza sessione, login, Privacy policy, Cookie 
 - Nessun CV caricato, nessuna candidatura creata e nessun dato reale di candidati consultato. Rimane da fare il collaudo completo di invio, associazione alla posizione, consultazione e download nell’admin con dati di prova concordati.
 - Questa è una rassegna funzionale, visiva e del codice coinvolto, non un penetration test né una verifica delle impostazioni private dei servizi cloud.
 
-## Anomalie e punti da affrontare, non modificati
+## Anomalie e punti da affrontare, con stato aggiornato
 
 ### 1. Informative provvisorie con candidatura pubblica attiva — priorità alta
 
@@ -76,21 +76,17 @@ Evidenza: selezione `featured`, `mock` e `slides` in `src/components/site/Featur
 
 **Intervento proposto:** stabilire se senza stelle il carosello debba essere nascosto oppure diventare una sezione esplicitamente chiamata «Progetti recenti».
 
-### 6. Risorse SEO e anteprime di condivisione incomplete — priorità media
+### 6. Risorse SEO e anteprime di condivisione — risolto
 
-**Verificato sul sito pubblico.** `/robots.txt` e `/sitemap.xml` rispondono con status 200, ma il contenuto è HTML con titolo «Pagina non trovata | EOS»: non sono un robots.txt e una sitemap validi. Nel codice mancano inoltre canonical, descrizioni specifiche delle singole pagine e metadati/immagini Open Graph per le condivisioni.
+Aggiunti robots.txt e sitemap.xml reali, con i Content-Type corretti, sei URL pubblici canonici, descrizioni specifiche per ogni pagina e anteprime Open Graph/Twitter con immagine EOS PNG 1200×630. Le informative provvisorie sono marcate noindex ed escluse dalla sitemap.
 
-Evidenze: richieste GET alle due risorse pubbliche; `src/app/layout.tsx`, `generateMetadata` nella pagina di sezione e assenza dei file metadata corrispondenti.
+Il dominio predefinito è quello Vercel attuale; `SITE_URL` permette di configurare quello definitivo. I deploy Preview sono esclusi dall’indicizzazione. Collaudo HTTP completato sulla build di produzione locale; configurazione e risultati in [SEO.md](SEO.md).
 
-**Intervento proposto:** scegliere il dominio definitivo, aggiungere le risorse corrette e completare i metadati per le pagine; definire anche l’indicizzazione di login e area riservata.
+### 7. Pagina admin richiesta dopo il login — ricontrollato, già gestito
 
-### 7. Dopo il login si perde la pagina admin richiesta — priorità medio-bassa
+Il controllo iniziale aveva registrato soltanto il pathname di arrivo (`/login`), senza il parametro della query. Il ricontrollo HTTP completo conferma invece un 307 verso `/login?redirectTo=%2Fadmin%2Fcontenuti%2Fprogetti`. Il proxy conserva già la destinazione validata e il login la utilizza.
 
-Aprendo senza sessione `/admin/contenuti/progetti`, si arriva a `/login` senza un parametro che conservi la destinazione. Il login supporta già `redirectTo`, ma `requireAdmin()` non lo trasmette; il risultato predefinito è la dashboard.
-
-Evidenze: prova di navigazione anonima; `src/utils/supabase/admin.ts`, `src/app/login/page.tsx`.
-
-**Intervento proposto:** conservare la destinazione interna in modo validato, per tornare all’editor richiesto dopo l’accesso.
+Non occorre la modifica proposta inizialmente per questo punto. Non è stato eseguito un accesso con credenziali reali durante il ricontrollo.
 
 ### 8. Pulsante «torna su» sopra i contenuti mobile — rifinitura da decidere
 
@@ -103,7 +99,7 @@ Essendo fisso sopra la pagina, il pulsante può sovrapporsi a un testo durante l
 1. Informative definitive e controllo del flusso candidature.
 2. Pulizia dei dati di prova e sostituzione dei segnaposto, con conferma dei numeri aziendali.
 3. Regola dei progetti in evidenza.
-4. SEO e navigazione dopo il login.
+4. SEO implementata e destinazione dopo login ricontrollata: nessun ulteriore intervento previsto per questi due punti.
 5. Rifinitura del pulsante mobile «torna su».
 
-Questa lista è un elenco di lavoro da valutare punto per punto. Le relative correzioni non sono incluse automaticamente nella modifica di aura, menu, footer e responsive.
+Questa lista è un elenco di lavoro da valutare punto per punto. Le relative correzioni non sono incluse automaticamente: fanno eccezione i punti esplicitamente segnati come risolti o già gestiti dopo il ricontrollo.

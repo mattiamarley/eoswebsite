@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+ <rect width="1200" height="630" fill="#091a45"/>
+ <g stroke="#fff" stroke-width="1" opacity=".055"><path d="M816 56v368"/><path d="M856 56v368"/><path d="M896 56v368"/><path d="M936 56v368"/><path d="M976 56v368"/><path d="M1016 56v368"/><path d="M1056 56v368"/><path d="M1096 56v368"/><path d="M1136 56v368"/><path d="M1176 56v368"/><path d="M804 64h380"/><path d="M804 104h380"/><path d="M804 144h380"/><path d="M804 184h380"/><path d="M804 224h380"/><path d="M804 264h380"/><path d="M804 304h380"/><path d="M804 344h380"/><path d="M804 384h380"/><path d="M804 424h380"/></g>
+ <g fill="none" stroke="#fff" stroke-width="1.5" opacity=".24">
+ <path d="M840 190 1000 110 1136 178 976 258Z M840 190v152l136 68 160-80V178 M976 258v152 M1000 110v152"/>
+ <path d="m840 240 136 68 160-80 M840 290l136 68 160-80 M880 210v152 M928 234v152 M1016 238v152 M1064 214v152 M1104 194v152"/>
+ </g>
+ <g fill="#fff" font-family="Arial, Helvetica, sans-serif">
+ <text x="64" y="133" font-size="100" letter-spacing="-5">eos</text>
+ <text x="68" y="211" font-size="18" letter-spacing="3" opacity=".7">INGEGNERIA E PROGETTAZIONE</text>
+ <text x="64" y="302" font-size="58" font-weight="700" letter-spacing="-2">Competenze diverse.</text>
+ <text x="64" y="374" font-size="58" font-weight="700" letter-spacing="-2">Un progetto integrato.</text>
+ <path d="M64 464h1072" stroke="#fff" opacity=".2"/>
+ <text x="68" y="512" font-size="19" letter-spacing="1.2" opacity=".9">PROGETTAZIONE CIVILE · AMBIENTE · SICUREZZA</text>
+ <text x="68" y="560" font-size="25" opacity=".7">Milano · Roma · Trieste</text>
+ </g></svg>

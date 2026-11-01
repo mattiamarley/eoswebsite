@@ -4,6 +4,7 @@ import { OFFICES, OFFICE_PHONE } from '@/src/lib/offices'
 import { ContactMap } from '@/src/components/site/ContactMap'
 import { ArrowIcon } from '@/src/components/site/ArrowIcon'
 import type { Metadata } from 'next'
+import { PAGE_SEO, pageMetadata, type SeoPath } from '@/src/lib/site-seo'
 import { notFound } from 'next/navigation'
 import { PageHeading, ContactBanner } from '@/src/components/site/Sections'
 import { Cards } from '@/src/components/site/Cards'
@@ -21,7 +22,12 @@ const sections: Record<string,[string,string]> = {
   'privacy-policy':['Privacy policy','Informativa in preparazione'],
   'cookie-policy':['Cookie policy','Informativa in preparazione'],
 }
-export async function generateMetadata({params}: {params:Promise<{section:string}>}):Promise<Metadata> {const {section}=await params;return {title: `${sections[section]?.[0] ?? 'Pagina non trovata'} | EOS`}}
+export async function generateMetadata({params}: {params:Promise<{section:string}>}):Promise<Metadata> {
+  const {section}=await params
+  const path=`/${section}`
+  if(!Object.hasOwn(PAGE_SEO,path))return {title:'Pagina non trovata | EOS',robots:{index:false,follow:false},alternates:{canonical:null}}
+  return pageMetadata(path as SeoPath)
+}
 export default async function SectionPage({params}: {params:Promise<{section:string}>}) {
   const {section}=await params
   if(!sections[section]) notFound()
