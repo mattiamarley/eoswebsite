@@ -7,7 +7,7 @@ if (configuredUrl.protocol !== 'https:' || configuredUrl.username || configuredU
 }
 export const SITE_URL = configuredUrl.origin
 export const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
-export const SOCIAL_IMAGE = '/images/eos-social-v1.png'
+export const SOCIAL_IMAGE = '/images/eos-social-v2.png'
 export const SITE_TITLE = 'EOS | Ingegneria e progettazione integrata'
 export const SITE_DESCRIPTION = 'Progettazione civile, ambiente e sicurezza. EOS integra competenze di ingegneria e progettazione, con uffici a Milano, Roma e Trieste.'
 

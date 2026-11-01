@@ -5,7 +5,7 @@
 - `/sitemap.xml`: XML generato da Next.js con le sei pagine principali: Home, About, Portfolio, Ufficio (`/studio`), Jobs e Contatti.
 - `/robots.txt`: consente l’esplorazione del sito pubblico, esclude admin/login e indica la sitemap.
 - Metadati delle pagine: titolo e descrizione specifici, canonical, Open Graph e Twitter Card di tipo `summary_large_image`.
-- Immagine social: `/images/eos-social-v1.png`, PNG da 1200×630 px. Il sorgente modificabile è `public/images/eos-social-v1.svg`.
+- Immagine social: `/images/eos-social-v2.png`, PNG da 1200×630 px. La grafica riprende la scritta eos con profondità e linee di costruzione della landing. Il sorgente modificabile è `public/images/eos-social-v2.svg`.
 
 Non vengono inventate pagine dei singoli progetti o delle posizioni: al momento si aprono in finestre modali, non hanno URL di pagina dedicati nella sitemap. Le informative ancora provvisorie sono escluse dalla sitemap e marcate `noindex`; quando verranno pubblicati i testi definitivi, aggiornare descrizione e `index` in `src/lib/site-seo.ts`.
 
