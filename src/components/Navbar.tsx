@@ -35,7 +35,7 @@ export function Navbar() {
         <div className="nav-wing nav-wing-right">{renderLinks(links.slice(3))}</div>
       </nav>
       <div className="touch-navigation" style={{visibility:open?'hidden':'visible'}}>
-        <button ref={menuTrigger} className="center-wordmark mobile-logo-trigger" onClick={()=>setOpen(true)} aria-label="Apri menu EOS" aria-haspopup="dialog" aria-expanded={open}>eos</button>
+        <button ref={menuTrigger} className="center-wordmark mobile-logo-trigger" onPointerDown={event=>{if(event.pointerType==='touch'||event.pointerType==='pen'){event.preventDefault();setOpen(true)}}} onClick={()=>setOpen(true)} aria-label="Apri menu EOS" aria-haspopup="dialog" aria-expanded={open}>eos</button>
       </div>
     </header>
     {open && <MobileNavigation trigger={menuTrigger} links={links} path={path} onClose={()=>setOpen(false)}/>}

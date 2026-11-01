@@ -10,12 +10,23 @@ export function MobileNavigation({links,path,onClose,trigger}:{links:string[][];
   useLayoutEffect(()=>{
     const dialog=ref.current!
     const triggerElement=trigger.current
-    const previous=document.body.style.overflow
+    const body=document.body
+    const scrollX=window.scrollX,scrollY=window.scrollY
+    const previous={overflow:body.style.overflow,position:body.style.position,top:body.style.top,left:body.style.left,right:body.style.right,width:body.style.width}
     const bounds=triggerElement?.getBoundingClientRect()
     if(bounds) dialog.style.top=`${bounds.top}px`
+    // Freeze the page as well as its overflow, including mobile momentum scrolling.
+    Object.assign(body.style,{overflow:'hidden',position:'fixed',top:`-${scrollY}px`,left:'0',right:'0',width:'100%'})
     dialog.showModal()
-    document.body.style.overflow='hidden'
-    return ()=>{dialog.close();document.body.style.overflow=previous;triggerElement?.focus({preventScroll:true})}
+    return ()=>{
+      dialog.close()
+      Object.assign(body.style,previous)
+      const root=document.documentElement,behavior=root.style.scrollBehavior
+      root.style.scrollBehavior='auto'
+      window.scrollTo(scrollX,scrollY)
+      root.style.scrollBehavior=behavior
+      triggerElement?.focus({preventScroll:true})
+    }
   },[trigger])
   useEffect(()=>{
     if(!closing)return

@@ -16,7 +16,7 @@ export function Footer() {
               <p><a href={OFFICE_PHONE.href}>{OFFICE_PHONE.label}</a></p>
             </div>
           </div>
-          <div className="footer-offices">{OFFICES.map(office=><div key={office.city}>
+          <div className="footer-offices">{OFFICES.map(office=><div key={office.city} className="footer-office">
             <p className="font-bold leading-tight mb-3 text-base md:text-[20px]">{office.city}</p>
             <div className="text-white/70 text-sm md:text-base leading-relaxed">
               <p>{office.address}</p><p>{office.postalCode} {office.city} - Italia</p>
