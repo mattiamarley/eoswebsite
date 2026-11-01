@@ -2,7 +2,7 @@
 
 ## Interventi completati in questa passata
 
-- Aura bianca permanente sul logo chiuso, sia desktop sia mobile; intensità maggiore quando la navigazione desktop è estesa. La pulsazione resta attiva sul logo chiuso, in bianco insieme all’aura fissa, rispettando la preferenza di movimento ridotto.
+- Aura bianca permanente sul logo chiuso, sia desktop sia mobile; intensità maggiore quando la navigazione desktop è estesa. La pulsazione resta attiva sul logo chiuso, nello stesso blu del logo, insieme all’aura bianca fissa, rispettando la preferenza di movimento ridotto. Alla prima apertura della sessione, la navbar desktop resta estesa per 6 secondi prima di richiudersi.
 - Apertura del menu mobile al contatto del dito o della penna, mantenendo il click per mouse e tastiera. Il tasto non avvia un gesto di scorrimento.
 - Pagina bloccata con posizione fissa mentre il menu mobile è aperto, per interrompere anche lo scorrimento inerziale. Alla chiusura vengono ripristinati gli stili precedenti e la posizione di lettura senza scorrimento animato.
 - Intestazioni Milano, Roma e Trieste allineate alla riga finale «ambiente e sicurezza» su desktop. La griglia condivide le righe tra azienda e sedi: non usa uno spostamento fisso che si romperebbe al variare delle righe del testo.

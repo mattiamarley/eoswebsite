@@ -21,8 +21,9 @@ export function Navbar() {
   useEffect(()=>{
     if(!window.matchMedia('(min-width:768px) and (hover:hover) and (pointer:fine)').matches)return
     try { if(sessionStorage.getItem('eos-nav-discovered'))return } catch {}
-    const start=window.setTimeout(()=>{setIntroOpen(true);try {sessionStorage.setItem('eos-nav-discovered','1')} catch {}},250)
-    const end=window.setTimeout(()=>setIntroOpen(false),3500)
+    const introDelay=250,introDuration=6000
+    const start=window.setTimeout(()=>{setIntroOpen(true);try {sessionStorage.setItem('eos-nav-discovered','1')} catch {}},introDelay)
+    const end=window.setTimeout(()=>setIntroOpen(false),introDelay+introDuration)
     return ()=>{window.clearTimeout(start);window.clearTimeout(end)}
   },[])
   const renderLinks = (items:string[][]) => items.map(([href,label]) => <Link href={href} key={href} aria-current={path===href?'page':undefined}>{label}</Link>)

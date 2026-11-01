@@ -416,7 +416,7 @@ button { cursor: pointer; }
 
 /* Discoverability cue for the collapsed EOS control. */
 .logo-navigation::after,.touch-navigation::after {
-  content:''; position:absolute; inset:-3px; border:2px solid rgb(255 255 255 / .65);
+  content:''; position:absolute; inset:-3px; border:2px solid rgb(9 26 69 / .65);
   border-radius:12px; pointer-events:none; opacity:0;
   animation:eos-logo-pulse 3.2s ease-out 1s infinite;
 }
@@ -425,9 +425,9 @@ button { cursor: pointer; }
   .logo-navigation:hover::after { animation:none; opacity:0; }
 }
 @keyframes eos-logo-pulse {
-  0%,15% { opacity:0; transform:scale(1); box-shadow:0 0 0 0 rgb(255 255 255 / 0); }
-  25% { opacity:.9; transform:scale(1.04); box-shadow:0 0 14px 3px rgb(255 255 255 / .4); }
-  65%,100% { opacity:0; transform:scale(1.55); box-shadow:0 0 22px 5px rgb(255 255 255 / 0); }
+  0%,15% { opacity:0; transform:scale(1); box-shadow:0 0 0 0 rgb(9 26 69 / 0); }
+  25% { opacity:.9; transform:scale(1.04); box-shadow:0 0 14px 3px rgb(9 26 69 / .4); }
+  65%,100% { opacity:0; transform:scale(1.55); box-shadow:0 0 22px 5px rgb(9 26 69 / 0); }
 }
 @media(prefers-reduced-motion:reduce) {
   .logo-navigation::after,.touch-navigation::after { display:none; animation:none; }
@@ -918,4 +918,3 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
  .photo-showcase-caption h2,.about-gallery-preview .photo-showcase-caption h2{font-size:clamp(20px,5.4vw,24px);-webkit-line-clamp:3}
  .photo-showcase-caption p,.about-gallery-preview .photo-showcase-caption p{font-size:13px;line-height:1.45;-webkit-line-clamp:4}
 }
-
