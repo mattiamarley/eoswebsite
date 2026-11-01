@@ -906,11 +906,11 @@ header.studio-heading { padding-top:225px; padding-bottom:72px; }
 @media(max-width:600px){.footer-offices{grid-template-columns:1fr;gap:28px}}
 
 /* Solid navy navigation: a small persistent halo, brighter when expanded. */
-.logo-navigation{background:#091a45;color:white;box-shadow:0 0 0 1px #ffffff70,0 0 18px 5px #ffffff70,0 0 36px 10px #ffffff26;transition:width .45s cubic-bezier(.22,1,.36,1),border-radius .45s,box-shadow .3s ease}
-.logo-navigation[data-intro-open],.logo-navigation:has(:focus-visible){box-shadow:0 0 0 1px #ffffff40,0 0 24px 8px #ffffff80,0 0 52px 16px #ffffff38}
-@media(hover:hover) and (pointer:fine){.logo-navigation:hover{box-shadow:0 0 0 1px #ffffff40,0 0 24px 8px #ffffff80,0 0 52px 16px #ffffff38}}
+.logo-navigation{background:#091a45;color:white;box-shadow:0 0 18px 5px #ffffff70,0 0 36px 10px #ffffff26;transition:width .45s cubic-bezier(.22,1,.36,1),border-radius .45s,box-shadow .3s ease}
+.logo-navigation[data-intro-open],.logo-navigation:has(:focus-visible){box-shadow:0 0 24px 8px #ffffff80,0 0 52px 16px #ffffff38}
+@media(hover:hover) and (pointer:fine){.logo-navigation:hover{box-shadow:0 0 24px 8px #ffffff80,0 0 52px 16px #ffffff38}}
 
-.touch-navigation{box-shadow:0 0 0 1px #ffffff70,0 0 18px 5px #ffffff70,0 0 36px 10px #ffffff26}
+.touch-navigation{box-shadow:0 0 18px 5px #ffffff70,0 0 36px 10px #ffffff26}
 
 /* Compact mobile photo captions: long titles wrap instead of losing a line. */
 @media(max-width:600px){
