@@ -12,7 +12,7 @@ export function galleryDraft(value:unknown):GallerySlide[]|null {
   const seen=new Set<string>()
   const result:GallerySlide[]=[]
   for(const raw of value){
-    if(!raw||typeof raw!=='object'||!validRecordId(raw.id)||seen.has(raw.id)||typeof raw.src!=='string'||raw.src.length>2048||typeof raw.alt!=='string'||!raw.alt.trim()||raw.alt.length>160||/[\x00-\x1f]/.test(raw.alt))return null
+    if(!raw||typeof raw!=='object'||!validRecordId(raw.id)||seen.has(raw.id)||typeof raw.src!=='string'||raw.src.length>2048||typeof raw.alt!=='string'||raw.alt.length>160||/[\x00-\x1f]/.test(raw.alt))return null
     const title=raw.title===undefined?'':raw.title, description=raw.description===undefined?'':raw.description
     if(typeof title!=='string'||title.length>120||/[\x00-\x1f]/.test(title)||typeof description!=='string'||description.length>600||description.includes('\0'))return null
     seen.add(raw.id);result.push({id:raw.id,src:raw.src,alt:raw.alt.trim(),title:title.trim(),description:description.trim()})

@@ -10,8 +10,16 @@ test('gallery draft preserves order, allows explicit empty selection and normali
  assert.equal(galleryDraft([slide])[0].alt,'Vista della facciata')
  assert.equal(galleryDraft([slide])[0].src,src)
 })
-test('rejects duplicate IDs, missing captions, binary values and more than eight slides',()=>{
- for(const value of [null,{},[slide,slide],[{...slide,alt:''}],[{...slide,alt:'x'.repeat(161)}],[{...slide,id:'not-id'}],[{...slide,alt:'bad\0text'}],Array(9).fill(slide)])assert.equal(galleryDraft(value),null)
+test('rejects duplicate IDs, invalid captions, binary values and more than eight slides',()=>{
+ for(const value of [null,{},[slide,slide],[{...slide,alt:null}],[{...slide,alt:'x'.repeat(161)}],[{...slide,id:'not-id'}],[{...slide,alt:'bad\0text'}],Array(9).fill(slide)])assert.equal(galleryDraft(value),null)
+})
+test('gallery photos can be saved and read with all text fields empty',()=>{
+ for(const alt of ['', '   ']){
+  const draft=galleryDraft([{...slide,alt,title:'',description:''}])
+  assert.deepEqual(draft,[{...slide,alt:'',title:'',description:''}])
+  assert.equal(galleryCaptionError(draft),null)
+  assert.deepEqual(galleryDraft(JSON.parse(JSON.stringify(draft))),draft)
+ }
 })
 test('only retains images owned by this gallery and in its isolated storage folder',()=>{
  assert.equal(validGalleryImage(src,origin),true)
