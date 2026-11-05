@@ -13,7 +13,7 @@ export async function saveAboutGallery(form:FormData,galleryKey:GalleryKey='abou
   if(typeof raw!=='string'||raw.length>48000||typeof revisionValue!=='string'||!/^\d{1,9}$/.test(revisionValue))return fail('Dati non validi. Ricarica la pagina.')
   let slides:GallerySlide[]|null
   try{slides=galleryDraft(JSON.parse(raw))}catch{return fail('Selezione non valida.')}
-  if(!slides)return fail('Controlla le foto e i testi: massimo 8 foto e testo alternativo di 160 caratteri.')
+  if(!slides)return fail('Controlla le foto e i testi: massimo 8 foto e rispetta i limiti indicati per i testi.')
   const captionError=galleryCaptionError(slides)
   if(captionError)return fail(captionError)
   const {data:current,error:readError}=await supabase.from('site_galleries').select('slides,revision').eq('key',galleryKey).single()
